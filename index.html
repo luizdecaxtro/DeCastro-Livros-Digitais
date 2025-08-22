@@ -24,8 +24,6 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
-    
-    /* Ensure buttons are always visible */
     button {
       min-height: 40px;
       display: inline-flex !important;
@@ -68,9 +66,13 @@
     
     <!-- Store Tab -->
     <div id="loja-content" class="fade-in">
-      <div class="mb-6 flex justify-end">
-        <button onclick="alert('Botão clicado! Abrindo formulário...'); openProductForm();" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-bold text-lg" style="box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
-          📚 CADASTRAR
+      <div class="mb-6 flex justify-between items-center">
+        <h2 class="text-2xl font-bold flex items-center gap-2">
+          <i data-lucide="store" class="w-6 h-6"></i>
+          Produtos Disponíveis
+        </h2>
+        <button onclick="openProductForm()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors font-medium">
+          ➕ Cadastrar Produto
         </button>
       </div>
       <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -94,7 +96,7 @@
             <span id="cart-total">R$ 0,00</span>
           </div>
           <button id="checkout-btn" onclick="checkout()" class="w-full mt-4 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-medium">
-            Finalizar Compra
+            💰 Finalizar Compra
           </button>
         </div>
       </div>
@@ -117,84 +119,54 @@
         </div>
       </div>
       <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="w-full">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produto</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoria</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Preço</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-            </tr>
-          </thead>
-          <tbody id="admin-products" class="bg-white divide-y divide-gray-200">
-            <!-- Admin products will be rendered here -->
-          </tbody>
-        </table>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produto</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoria</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Preço</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="products-table" class="bg-white divide-y divide-gray-200">
+              <!-- Products will be rendered here -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
     <!-- Sales Tab -->
     <div id="vendas-content" class="hidden fade-in">
-      <!-- Dashboard de Vendas -->
+      <!-- Dashboard -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow p-6">
-          <div class="flex items-center">
-            <div class="p-3 bg-green-100 rounded-full">
-              <span class="text-2xl">💰</span>
-            </div>
-            <div class="ml-4">
-              <h3 class="text-lg font-semibold text-gray-900">Receita Total</h3>
-              <p class="text-2xl font-bold text-green-600" id="total-revenue">R$ 0,00</p>
-            </div>
-          </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h3 class="text-lg font-semibold text-gray-700 mb-2">💰 Receita Total</h3>
+          <p id="total-revenue" class="text-3xl font-bold text-green-600">R$ 0,00</p>
         </div>
-        
-        <div class="bg-white rounded-lg shadow p-6">
-          <div class="flex items-center">
-            <div class="p-3 bg-blue-100 rounded-full">
-              <span class="text-2xl">📈</span>
-            </div>
-            <div class="ml-4">
-              <h3 class="text-lg font-semibold text-gray-900">Vendas Hoje</h3>
-              <p class="text-2xl font-bold text-blue-600" id="today-sales">0</p>
-            </div>
-          </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h3 class="text-lg font-semibold text-gray-700 mb-2">📈 Vendas Hoje</h3>
+          <p id="today-sales" class="text-3xl font-bold text-blue-600">0</p>
         </div>
-        
-        <div class="bg-white rounded-lg shadow p-6">
-          <div class="flex items-center">
-            <div class="p-3 bg-purple-100 rounded-full">
-              <span class="text-2xl">📚</span>
-            </div>
-            <div class="ml-4">
-              <h3 class="text-lg font-semibold text-gray-900">Livros Vendidos</h3>
-              <p class="text-2xl font-bold text-purple-600" id="books-sold">0</p>
-            </div>
-          </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h3 class="text-lg font-semibold text-gray-700 mb-2">📚 Produtos Vendidos</h3>
+          <p id="total-products-sold" class="text-3xl font-bold text-purple-600">0</p>
         </div>
-        
-        <div class="bg-white rounded-lg shadow p-6">
-          <div class="flex items-center">
-            <div class="p-3 bg-orange-100 rounded-full">
-              <span class="text-2xl">🔥</span>
-            </div>
-            <div class="ml-4">
-              <h3 class="text-lg font-semibold text-gray-900">Mais Vendido</h3>
-              <p class="text-sm font-semibold text-orange-600" id="best-seller">-</p>
-            </div>
-          </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h3 class="text-lg font-semibold text-gray-700 mb-2">🔥 Mais Vendido</h3>
+          <p id="best-seller" class="text-lg font-bold text-orange-600">-</p>
         </div>
       </div>
 
-      <!-- Lista de Vendas -->
+      <!-- Sales History -->
       <div class="bg-white rounded-lg shadow">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
-            <span class="text-2xl">📉</span>
+        <div class="px-6 py-4 border-b">
+          <h2 class="text-2xl font-bold flex items-center gap-2">
+            <i data-lucide="bar-chart" class="w-6 h-6"></i>
             Histórico de Vendas
           </h2>
         </div>
-        
         <div class="overflow-x-auto">
           <table class="w-full">
             <thead class="bg-gray-50">
@@ -207,36 +179,41 @@
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
               </tr>
             </thead>
-            <tbody id="sales-list" class="bg-white divide-y divide-gray-200">
+            <tbody id="sales-table" class="bg-white divide-y divide-gray-200">
               <!-- Sales will be rendered here -->
             </tbody>
           </table>
-          
-          <div id="no-sales" class="text-center py-12 text-gray-500">
-            <span class="text-4xl block mb-4">📉</span>
-            <p>Nenhuma venda realizada ainda</p>
-            <p class="text-sm mt-2">As vendas aparecerão aqui quando os clientes finalizarem compras</p>
-          </div>
         </div>
       </div>
     </div>
-
   </main>
 
   <!-- Product Form Modal -->
   <div id="product-form-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal-overlay flex items-center justify-center z-50">
     <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-      <h3 id="form-title" class="text-xl font-bold mb-4">Cadastrar Produto</h3>
-      
-      <div class="space-y-4">
+      <h3 id="modal-title" class="text-xl font-bold mb-4">Cadastrar Produto</h3>
+      <form id="product-form" class="space-y-4">
         <div>
-          <label class="block text-sm font-medium mb-1">Nome do Livro</label>
-          <input id="product-name" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: JavaScript Completo">
+          <label class="block text-sm font-medium mb-1">Nome do Produto *</label>
+          <input id="product-name" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Nome do livro digital" required>
         </div>
         
         <div>
-          <label class="block text-sm font-medium mb-1">Preço (R$)</label>
-          <input id="product-price" type="number" step="0.01" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="49.99">
+          <label class="block text-sm font-medium mb-1">Categoria *</label>
+          <div class="flex gap-2">
+            <select id="product-category" class="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+              <option value="">Selecione uma categoria</option>
+              <!-- Categories will be populated dynamically -->
+            </select>
+            <button type="button" onclick="openCategoryModal()" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors" title="Nova Categoria">
+              ➕
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Preço (R$) *</label>
+          <input id="product-price" type="number" step="0.01" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="49.99" required>
         </div>
 
         <div>
@@ -250,54 +227,18 @@
         
         <div>
           <label class="block text-sm font-medium mb-1">Descrição</label>
-          <textarea id="product-description" rows="3" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Breve descrição do livro digital..."></textarea>
+          <textarea id="product-description" rows="3" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Breve descrição do produto digital..."></textarea>
         </div>
         
-        <div>
-          <label class="block text-sm font-medium mb-1">Categoria</label>
-          <div class="flex gap-2">
-            <select id="product-category" class="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Selecione uma categoria</option>
-              <option value="Programação">Programação</option>
-              <option value="Design">Design</option>
-              <option value="Negócios">Negócios</option>
-              <option value="Finanças">Finanças</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Desenvolvimento Pessoal">Desenvolvimento Pessoal</option>
-              <option value="Fotografia">Fotografia</option>
-              <option value="Literatura">Literatura</option>
-              <option value="Educação">Educação</option>
-              <option value="nova-categoria">+ Nova Categoria</option>
-            </select>
-            <button type="button" onclick="toggleNewCategoryInput()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-              ➕
-            </button>
-          </div>
-          
-          <!-- Campo para nova categoria (inicialmente oculto) -->
-          <div id="new-category-container" class="mt-2 hidden">
-            <input id="new-category-input" type="text" placeholder="Digite o nome da nova categoria..." class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
-            <div class="flex gap-2 mt-2">
-              <button type="button" onclick="addNewCategory()" class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors">
-                ✓ Adicionar
-              </button>
-              <button type="button" onclick="cancelNewCategory()" class="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600 transition-colors">
-                ✕ Cancelar
-              </button>
-            </div>
-          </div>
+        <div class="flex gap-3 pt-4">
+          <button type="button" onclick="closeProductForm()" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors">
+            Cancelar
+          </button>
+          <button id="save-btn" type="button" onclick="saveProduct()" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+            Cadastrar
+          </button>
         </div>
-      </div>
-      
-      <div class="flex gap-3 mt-6">
-        <button onclick="closeProductForm()" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors">
-          Cancelar
-        </button>
-        <button onclick="saveProduct()" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2 transition-colors">
-          <i data-lucide="save" class="w-4 h-4"></i>
-          <span id="save-btn-text">Cadastrar</span>
-        </button>
-      </div>
+      </form>
     </div>
   </div>
 
@@ -338,6 +279,7 @@
             <div>
               <div class="font-medium">PIX</div>
               <div class="text-sm text-green-600">Instantâneo • Sem taxa</div>
+              <div class="text-xs text-blue-600">*Deve estar ativado na sua conta MP</div>
             </div>
           </label>
           
@@ -411,542 +353,183 @@
     </div>
   </div>
 
+  <!-- Category Modal -->
+  <div id="category-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal-overlay flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+      <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <span class="text-2xl">🏷️</span>
+        Nova Categoria
+      </h3>
+      
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Nome da Categoria *</label>
+        <input id="category-name" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Culinária, Música, etc." required>
+      </div>
+      
+      <div class="mb-6 p-3 bg-blue-50 rounded-lg">
+        <p class="text-sm text-blue-800">
+          <strong>Dica:</strong> Crie categorias que organizem bem seus produtos. Exemplos: Culinária, Música, Idiomas, Saúde, etc.
+        </p>
+      </div>
+      
+      <div class="flex gap-3">
+        <button onclick="closeCategoryModal()" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors">
+          Cancelar
+        </button>
+        <button onclick="saveCategory()" class="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+          ➕ Criar Categoria
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toast" class="hidden fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 fade-in">
     Produto adicionado ao carrinho!
   </div>
 
   <script>
-    // Global State
+    // Global Variables
+    let products = JSON.parse(localStorage.getItem('products')) || [];
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    let products = JSON.parse(localStorage.getItem('products')) || [
-      { id: 1, name: 'JavaScript Completo', price: 49.99, image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=500&fit=crop', category: 'Programação', description: 'Aprenda JavaScript do zero ao avançado com projetos práticos.' },
-      { id: 2, name: 'Marketing Digital', price: 39.99, image: 'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=400&h=500&fit=crop', category: 'Negócios', description: 'Estratégias completas de marketing digital para alavancar seu negócio.' },
-      { id: 3, name: 'Design Gráfico Moderno', price: 59.99, image: 'https://images.unsplash.com/photo-1558655146-d09347e92766?w=400&h=500&fit=crop', category: 'Design', description: 'Domine as ferramentas e técnicas do design gráfico contemporâneo.' },
-      { id: 4, name: 'Finanças Pessoais', price: 29.99, image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=500&fit=crop', category: 'Finanças', description: 'Organize suas finanças e construa riqueza de forma inteligente.' }
-    ];
+    let sales = JSON.parse(localStorage.getItem('sales')) || [];
     let categories = JSON.parse(localStorage.getItem('categories')) || [
       'Programação', 'Design', 'Negócios', 'Finanças', 'Marketing', 
       'Desenvolvimento Pessoal', 'Fotografia', 'Literatura', 'Educação'
     ];
-    let sales = JSON.parse(localStorage.getItem('sales')) || [];
     let mpConfig = JSON.parse(localStorage.getItem('mpConfig')) || { publicKey: '', accessToken: '' };
     let mp = null;
     let activeTab = 'loja';
     let editingProduct = null;
 
-    // Utility Functions
-    function saveToStorage() {
-      localStorage.setItem('cart', JSON.stringify(cart));
-      localStorage.setItem('products', JSON.stringify(products));
-      localStorage.setItem('categories', JSON.stringify(categories));
-      localStorage.setItem('sales', JSON.stringify(sales));
-    }
-
-    // Category Management Functions
-    function renderCategoryOptions() {
-      const select = document.getElementById('product-category');
-      const currentValue = select.value;
-      
-      // Clear existing options
-      select.innerHTML = '<option value="">Selecione uma categoria</option>';
-      
-      // Add category options
-      categories.forEach(category => {
-        const option = document.createElement('option');
-        option.value = category;
-        option.textContent = category;
-        select.appendChild(option);
-      });
-      
-      // Add "+ Nova Categoria" option
-      const newOption = document.createElement('option');
-      newOption.value = 'nova-categoria';
-      newOption.textContent = '+ Nova Categoria';
-      select.appendChild(newOption);
-      
-      // Restore previous value if it still exists
-      if (currentValue && categories.includes(currentValue)) {
-        select.value = currentValue;
-      }
-    }
-
-    function toggleNewCategoryInput() {
-      const container = document.getElementById('new-category-container');
-      const input = document.getElementById('new-category-input');
-      
-      if (container.classList.contains('hidden')) {
-        container.classList.remove('hidden');
-        input.focus();
-      } else {
-        container.classList.add('hidden');
-        input.value = '';
-      }
-    }
-
-    function addNewCategory() {
-      const input = document.getElementById('new-category-input');
-      const newCategory = input.value.trim();
-      
-      if (!newCategory) {
-        alert('Por favor, digite o nome da categoria.');
-        return;
-      }
-      
-      if (categories.includes(newCategory)) {
-        alert('Esta categoria já existe!');
-        return;
-      }
-      
-      // Add new category
-      categories.push(newCategory);
-      saveToStorage();
-      
-      // Update category dropdown
-      renderCategoryOptions();
-      
-      // Select the new category
-      document.getElementById('product-category').value = newCategory;
-      
-      // Hide input
-      cancelNewCategory();
-      
-      showToast('Nova categoria adicionada: ' + newCategory);
-    }
-
-    function cancelNewCategory() {
-      const container = document.getElementById('new-category-container');
-      const input = document.getElementById('new-category-input');
-      
-      container.classList.add('hidden');
-      input.value = '';
-      
-      // Reset select to previous value if it was "nova-categoria"
-      const select = document.getElementById('product-category');
-      if (select.value === 'nova-categoria') {
-        select.value = '';
-      }
-    }
-
-    // Sales Management Functions
-    function createSale(customerName = 'Cliente Anônimo', customerEmail = '', paymentMethod = 'pix') {
-      if (cart.length === 0) return null;
-      
-      const saleItems = cart.map(item => {
-        const product = products.find(p => p.id === item.productId);
-        return {
-          productId: item.productId,
-          productName: product.name,
-          category: product.category,
-          price: product.price,
-          quantity: item.quantity,
-          subtotal: product.price * item.quantity
-        };
-      });
-      
-      const sale = {
-        id: Date.now(),
-        date: new Date().toISOString(),
-        customer: customerName,
-        email: customerEmail,
-        paymentMethod: getPaymentMethodName(paymentMethod),
-        items: saleItems,
-        total: saleItems.reduce((sum, item) => sum + item.subtotal, 0),
-        status: 'Concluída'
-      };
-      
-      sales.push(sale);
-      saveToStorage();
-      return sale;
-    }
-
-    function renderSalesData() {
-      // Calculate totals
-      const totalRevenue = sales.reduce((sum, sale) => sum + sale.total, 0);
-      const today = new Date().toDateString();
-      const todaySales = sales.filter(sale => new Date(sale.date).toDateString() === today);
-      const totalBooksSold = sales.reduce((sum, sale) => 
-        sum + sale.items.reduce((itemSum, item) => itemSum + item.quantity, 0), 0
-      );
-      
-      // Find best seller
-      const productSales = {};
-      sales.forEach(sale => {
-        sale.items.forEach(item => {
-          productSales[item.productName] = (productSales[item.productName] || 0) + item.quantity;
-        });
-      });
-      
-      const bestSeller = Object.keys(productSales).reduce((a, b) => 
-        productSales[a] > productSales[b] ? a : b, '-'
-      );
-      
-      // Update dashboard
-      document.getElementById('total-revenue').textContent = `R$ ${totalRevenue.toFixed(2)}`;
-      document.getElementById('today-sales').textContent = todaySales.length;
-      document.getElementById('books-sold').textContent = totalBooksSold;
-      document.getElementById('best-seller').textContent = bestSeller.length > 20 ? 
-        bestSeller.substring(0, 17) + '...' : bestSeller;
-      
-      // Update sales count in tab
-      document.getElementById('sales-count').textContent = sales.length;
-    }
-
-    function renderSalesList() {
-      const salesList = document.getElementById('sales-list');
-      const noSales = document.getElementById('no-sales');
-      
-      if (sales.length === 0) {
-        noSales.style.display = 'block';
-        salesList.innerHTML = '';
-        return;
-      }
-      
-      noSales.style.display = 'none';
-      salesList.innerHTML = '';
-      
-      // Sort sales by date (newest first)
-      const sortedSales = [...sales].sort((a, b) => new Date(b.date) - new Date(a.date));
-      
-      sortedSales.forEach(sale => {
-        const date = new Date(sale.date);
-        const formattedDate = date.toLocaleDateString('pt-BR') + ' ' + 
-                             date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        
-        const itemsText = sale.items.map(item => 
-          `${item.productName} (${item.quantity}x)`
-        ).join(', ');
-        
-        const paymentIcon = {
-          'PIX': '🚀',
-          'Cartão de Crédito': '💳',
-          'Boleto Bancário': '📄'
-        };
-        
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-            ${formattedDate}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-            <div>${sale.customer}</div>
-            <div class="text-xs text-gray-500">${sale.email || ''}</div>
-          </td>
-          <td class="px-6 py-4 text-sm text-gray-900 max-w-md">
-            <div class="truncate" title="${itemsText}">${itemsText}</div>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-            <span class="flex items-center gap-1">
-              ${paymentIcon[sale.paymentMethod] || '💳'}
-              ${sale.paymentMethod || 'PIX'}
-            </span>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-            R$ ${sale.total.toFixed(2)}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-              ${sale.status}
-            </span>
-          </td>
-        `;
-        salesList.appendChild(row);
-      });
-    }
-
-    function updateCartCount() {
-      document.getElementById('cart-count').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
-    }
-
-    function updateProductsCount() {
-      document.getElementById('products-count').textContent = products.length;
-    }
-    
-    function updateSalesCount() {
-      document.getElementById('sales-count').textContent = sales.length;
-    }
-
-    function showToast(message, type = 'success') {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.className = `fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg z-50 fade-in ${
-        type === 'success' ? 'bg-green-600' : 'bg-red-600'
-      } text-white`;
-      toast.classList.remove('hidden');
-      setTimeout(() => toast.classList.add('hidden'), 3000);
-    }
-
-    // Tab Navigation
+    // Tab Management
     function switchTab(tabName) {
-      // Hide all tabs
-      document.getElementById('loja-content').classList.add('hidden');
-      document.getElementById('carrinho-content').classList.add('hidden');
-      document.getElementById('admin-content').classList.add('hidden');
-      document.getElementById('vendas-content').classList.add('hidden');
-
-      // Reset all tab buttons
-      document.querySelectorAll('nav button').forEach(btn => {
-        btn.className = 'py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors';
+      // Hide all content
+      document.querySelectorAll('[id$="-content"]').forEach(content => {
+        content.classList.add('hidden');
       });
 
-      // Show selected tab and highlight button
-      document.getElementById(`${tabName}-content`).classList.remove('hidden');
-      document.getElementById(`tab-${tabName}`).className = 'py-4 px-2 border-b-2 border-blue-600 font-medium text-blue-600 transition-colors';
-      
+      // Remove active class from all tabs
+      document.querySelectorAll('[id^="tab-"]').forEach(tab => {
+        tab.classList.remove('border-blue-600', 'text-blue-600');
+        tab.classList.add('border-transparent', 'text-gray-700');
+      });
+
+      // Show selected content
+      document.getElementById(tabName + '-content').classList.remove('hidden');
+
+      // Add active class to selected tab
+      const activeTabBtn = document.getElementById('tab-' + tabName);
+      activeTabBtn.classList.add('border-blue-600', 'text-blue-600');
+      activeTabBtn.classList.remove('border-transparent', 'text-gray-700');
+
       activeTab = tabName;
 
-      if (tabName === 'carrinho') {
+      // Render content based on tab
+      if (tabName === 'loja') {
+        renderProducts();
+      } else if (tabName === 'carrinho') {
         renderCartItems();
       } else if (tabName === 'admin') {
-        renderAdminProducts();
+        renderProductsList();
       } else if (tabName === 'vendas') {
-        renderSalesData();
         renderSalesList();
+        updateSalesMetrics();
       }
     }
 
-    // Product Management
-    function openProductForm(productId = null) {
-      console.log('openProductForm chamada:', productId);
-      const modal = document.getElementById('product-form-modal');
-      const title = document.getElementById('form-title');
-      const saveBtn = document.getElementById('save-btn-text');
-      
-      if (!modal) {
-        alert('Erro: Modal não encontrado!');
-        return;
-      }
-      
-      modal.classList.remove('hidden');
-      console.log('Modal aberto');
-      
-      if (productId) {
-        const product = products.find(p => p.id === productId);
-        editingProduct = product;
-        title.textContent = 'Editar Produto';
-        saveBtn.textContent = 'Atualizar';
-        document.getElementById('product-name').value = product.name;
-        document.getElementById('product-price').value = product.price;
-        // For edit mode, we can't set file input value, but we can show current image
-        if (product.image) {
-          const preview = document.getElementById('image-preview');
-          const previewImg = document.getElementById('preview-img');
-          previewImg.src = product.image;
-          preview.classList.remove('hidden');
-        }
-        document.getElementById('product-description').value = product.description || '';
-        document.getElementById('product-category').value = product.category;
-      } else {
-        editingProduct = null;
-        title.textContent = 'Cadastrar Produto';
-        saveBtn.textContent = 'Cadastrar';
-        document.getElementById('product-name').value = '';
-        document.getElementById('product-price').value = '';
-        document.getElementById('product-image').value = '';
-        // Clear image preview
-        document.getElementById('image-preview').classList.add('hidden');
-        document.getElementById('product-description').value = '';
-        document.getElementById('product-category').value = '';
-      }
-    }
-
-    function closeProductForm() {
-      document.getElementById('product-form-modal').classList.add('hidden');
-      editingProduct = null;
-    }
-
-    async function saveProduct() {
-      const name = document.getElementById('product-name').value;
-      const price = parseFloat(document.getElementById('product-price').value);
-      const category = document.getElementById('product-category').value;
-      const description = document.getElementById('product-description').value;
-      const imageFileInput = document.getElementById('product-image');
-      const imageFile = imageFileInput.files[0];
-
-      if (!name || !price || !category) {
-        alert('Por favor, preencha todos os campos obrigatórios (Nome, Preço e Categoria)');
-        return;
-      }
-      
-      let imageData = null;
-      
-      // Handle image upload
-      if (imageFile) {
-        try {
-          imageData = await handleImageUpload(imageFile);
-        } catch (error) {
-          alert('Erro ao processar imagem. Tente novamente.');
-          return;
-        }
-      } else if (editingProduct && editingProduct.image) {
-        // Keep existing image if editing and no new file selected
-        imageData = editingProduct.image;
-      }
-
-      // Use uploaded image data or fallback to placeholder
-      const finalImageUrl = imageData || `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&q=80`;
-
-      if (editingProduct) {
-        const index = products.findIndex(p => p.id === editingProduct.id);
-        products[index] = { ...products[index], name, price, category, description, image: finalImageUrl };
-      } else {
-        const newProduct = {
-          id: Date.now(),
-          name,
-          price,
-          category,
-          description,
-          image: finalImageUrl
-        };
-        products.push(newProduct);
-      }
-
-      saveToStorage();
-      renderProducts();
-      renderAdminProducts();
-      updateProductsCount();
-      closeProductForm();
-      showToast(editingProduct ? 'Produto atualizado!' : 'Produto cadastrado!');
-    }
-
-    function deleteProduct(id) {
-      if (confirm('Tem certeza que deseja excluir este produto?')) {
-        products = products.filter(p => p.id !== id);
-        saveToStorage();
-        renderProducts();
-        renderAdminProducts();
-        updateProductsCount();
-        showToast('Produto excluído!');
-      }
-    }
-
-    // Render Functions
+    // Products Management
     function renderProducts() {
       const grid = document.getElementById('products-grid');
       grid.innerHTML = '';
 
-      products.forEach(product => {
-        const productCard = `
-          <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-            <img src="${product.image}" alt="${product.name}" class="w-full h-64 object-cover">
-            <div class="p-4">
-              <p class="text-xs text-gray-500 mb-1 uppercase font-medium">${product.category}</p>
-              <h3 class="font-semibold text-lg mb-2 line-clamp-2">${product.name}</h3>
-              <p class="text-sm text-gray-600 mb-3 line-clamp-2">${product.description || 'Descrição não disponível'}</p>
-              <p class="text-2xl font-bold text-green-600 mb-4">R$ ${product.price.toFixed(2)}</p>
-              <button onclick="addToCart(${product.id})" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2 transition-colors">
-                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
-                Adicionar ao Carrinho
-              </button>
-            </div>
+      if (products.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <div class="text-6xl mb-4">📚</div>
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">Nenhum produto cadastrado</h3>
+            <p class="text-gray-600">Use o botão "Cadastrar Produto" acima para adicionar seus primeiros produtos</p>
           </div>
         `;
-        grid.innerHTML += productCard;
-      });
-
-      // Initialize Lucide icons
-      lucide.createIcons();
-    }
-
-    function renderCartItems() {
-      const container = document.getElementById('cart-items');
-      const total = document.getElementById('cart-total');
-      const checkoutBtn = document.getElementById('checkout-btn');
-
-      if (cart.length === 0) {
-        container.innerHTML = '<p class="text-gray-500 text-center py-8">Seu carrinho está vazio</p>';
-        total.textContent = 'R$ 0,00';
-        checkoutBtn.disabled = true;
-        checkoutBtn.className = 'w-full mt-4 bg-gray-400 text-white py-3 px-4 rounded-lg cursor-not-allowed font-medium';
         return;
       }
 
-      container.innerHTML = '';
-      let totalValue = 0;
-
-      cart.forEach(item => {
-        const product = products.find(p => p.id === item.productId);
-        if (!product) return;
-
-        const itemTotal = product.price * item.quantity;
-        totalValue += itemTotal;
-
-        const cartItem = `
-          <div class="flex items-center gap-4 py-4 border-b">
-            <img src="${product.image}" alt="${product.name}" class="w-16 h-20 object-cover rounded">
-            <div class="flex-1">
-              <h4 class="font-medium">${product.name}</h4>
-              <p class="text-sm text-gray-500">${product.category}</p>
-              <p class="text-lg font-bold text-green-600">R$ ${product.price.toFixed(2)}</p>
+      products.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow';
+        card.innerHTML = `
+          <div class="h-48 bg-gray-200 overflow-hidden">
+            <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&q=80'">
+          </div>
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="font-semibold text-gray-800 line-clamp-2">${product.name}</h3>
+              <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full ml-2 whitespace-nowrap">${product.category}</span>
             </div>
-            <div class="flex items-center gap-2">
-              <button onclick="updateCartQuantity(${item.productId}, -1)" class="w-8 h-8 bg-gray-200 rounded flex items-center justify-center hover:bg-gray-300">
-                <i data-lucide="minus" class="w-4 h-4"></i>
-              </button>
-              <span class="w-8 text-center">${item.quantity}</span>
-              <button onclick="updateCartQuantity(${item.productId}, 1)" class="w-8 h-8 bg-gray-200 rounded flex items-center justify-center hover:bg-gray-300">
-                <i data-lucide="plus" class="w-4 h-4"></i>
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">${product.description || 'Produto digital de alta qualidade'}</p>
+            <div class="flex justify-between items-center">
+              <span class="text-2xl font-bold text-green-600">R$ ${product.price.toFixed(2)}</span>
+              <button onclick="addToCart(${product.id})" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                🛒 Adicionar
               </button>
             </div>
-            <button onclick="removeFromCart(${item.productId})" class="text-red-500 hover:text-red-700 p-2">
-              <i data-lucide="trash-2" class="w-4 h-4"></i>
-            </button>
           </div>
         `;
-        container.innerHTML += cartItem;
+        grid.appendChild(card);
       });
-
-      total.textContent = `R$ ${totalValue.toFixed(2)}`;
-      checkoutBtn.disabled = false;
-      checkoutBtn.className = 'w-full mt-4 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-medium';
-
-      // Initialize Lucide icons
-      lucide.createIcons();
     }
 
-    function renderAdminProducts() {
-      const tbody = document.getElementById('admin-products');
+    function renderProductsList() {
+      const tbody = document.getElementById('products-table');
       tbody.innerHTML = '';
 
-      products.forEach(product => {
-        const row = `
+      if (products.length === 0) {
+        tbody.innerHTML = `
           <tr>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center">
-                <img src="${product.image}" alt="${product.name}" class="w-10 h-12 object-cover rounded mr-4">
-                <div>
-                  <div class="text-sm font-medium text-gray-900">${product.name}</div>
-                  <div class="text-sm text-gray-500">${product.description?.substring(0, 50)}...</div>
-                </div>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${product.category}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">R$ ${product.price.toFixed(2)}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <button onclick="openProductForm(${product.id})" class="text-blue-600 hover:text-blue-900 mr-4">
-                <i data-lucide="edit" class="w-4 h-4"></i>
-              </button>
-              <button onclick="deleteProduct(${product.id})" class="text-red-600 hover:text-red-900">
-                <i data-lucide="trash-2" class="w-4 h-4"></i>
-              </button>
+            <td colspan="4" class="px-6 py-8 text-center text-gray-500">
+              <div class="text-4xl mb-2">📦</div>
+              <p>Nenhum produto cadastrado</p>
             </td>
           </tr>
         `;
-        tbody.innerHTML += row;
-      });
+        return;
+      }
 
-      // Initialize Lucide icons
-      lucide.createIcons();
+      products.forEach(product => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="h-10 w-10 flex-shrink-0">
+                <img class="h-10 w-10 rounded object-cover" src="${product.image}" alt="${product.name}" onerror="this.src='https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&q=80'">
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">${product.name}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${product.category}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">R$ ${product.price.toFixed(2)}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <button onclick="editProduct(${product.id})" class="text-blue-600 hover:text-blue-900 mr-3">Editar</button>
+            <button onclick="deleteProduct(${product.id})" class="text-red-600 hover:text-red-900">Excluir</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
     }
 
-    // Cart Functions
+    // Cart Management
     function addToCart(productId) {
       const existingItem = cart.find(item => item.productId === productId);
       
       if (existingItem) {
         existingItem.quantity += 1;
       } else {
-        cart.push({ productId, quantity: 1 });
+        cart.push({
+          productId: productId,
+          quantity: 1
+        });
       }
       
       saveToStorage();
@@ -954,28 +537,87 @@
       showToast('Produto adicionado ao carrinho!');
     }
 
-    function updateCartQuantity(productId, change) {
+    function renderCartItems() {
+      const container = document.getElementById('cart-items');
+      container.innerHTML = '';
+
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8">
+            <div class="text-4xl mb-4">🛒</div>
+            <p class="text-gray-600">Seu carrinho está vazio</p>
+          </div>
+        `;
+        updateCartTotal();
+        return;
+      }
+
+      cart.forEach(item => {
+        const product = products.find(p => p.id === item.productId);
+        if (!product) return;
+
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'flex items-center justify-between py-4 border-b';
+        itemDiv.innerHTML = `
+          <div class="flex items-center">
+            <img src="${product.image}" alt="${product.name}" class="w-16 h-20 object-cover rounded mr-4" onerror="this.src='https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&q=80'">
+            <div>
+              <h4 class="font-medium">${product.name}</h4>
+              <p class="text-sm text-gray-600">${product.category}</p>
+              <p class="text-lg font-bold text-green-600">R$ ${product.price.toFixed(2)}</p>
+            </div>
+          </div>
+          <div class="flex items-center">
+            <button onclick="updateCartQuantity(${item.productId}, ${item.quantity - 1})" class="bg-gray-200 px-2 py-1 rounded">-</button>
+            <span class="mx-3 font-medium">${item.quantity}</span>
+            <button onclick="updateCartQuantity(${item.productId}, ${item.quantity + 1})" class="bg-gray-200 px-2 py-1 rounded">+</button>
+            <button onclick="removeFromCart(${item.productId})" class="ml-4 text-red-600 hover:text-red-800">🗑️</button>
+          </div>
+        `;
+        container.appendChild(itemDiv);
+      });
+
+      updateCartTotal();
+    }
+
+    function updateCartQuantity(productId, newQuantity) {
+      if (newQuantity <= 0) {
+        removeFromCart(productId);
+        return;
+      }
+
       const item = cart.find(item => item.productId === productId);
       if (item) {
-        item.quantity += change;
-        if (item.quantity <= 0) {
-          cart = cart.filter(item => item.productId !== productId);
-        }
+        item.quantity = newQuantity;
+        saveToStorage();
+        renderCartItems();
+        updateCartCount();
       }
-      
-      saveToStorage();
-      updateCartCount();
-      renderCartItems();
     }
 
     function removeFromCart(productId) {
       cart = cart.filter(item => item.productId !== productId);
       saveToStorage();
-      updateCartCount();
       renderCartItems();
-      showToast('Produto removido do carrinho!', 'success');
+      updateCartCount();
+      showToast('Produto removido do carrinho!');
     }
 
+    function updateCartTotal() {
+      const total = cart.reduce((sum, item) => {
+        const product = products.find(p => p.id === item.productId);
+        return sum + (product ? product.price * item.quantity : 0);
+      }, 0);
+
+      document.getElementById('cart-total').textContent = `R$ ${total.toFixed(2)}`;
+    }
+
+    function updateCartCount() {
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('cart-count').textContent = count;
+    }
+
+    // Checkout and Payment
     function checkout() {
       if (cart.length === 0) return;
       
@@ -1088,7 +730,7 @@
         return {
           id: product.id.toString(),
           title: product.name,
-          description: product.description || 'Livro digital - Loja DeCastro',
+          description: product.description || 'Produto digital - Loja DeCastro',
           category_id: product.category,
           quantity: item.quantity,
           currency_id: 'BRL',
@@ -1110,7 +752,9 @@
         payment_methods: {
           excluded_payment_types: [],
           excluded_payment_methods: [],
-          installments: 12
+          default_payment_method_id: null,
+          installments: 12,
+          default_installments: 1
         },
         back_urls: {
           success: window.location.href + '?status=success&ref=' + externalReference,
@@ -1119,7 +763,6 @@
         },
         auto_return: 'approved',
         external_reference: externalReference,
-        notification_url: window.location.origin + '/webhook', // This would need a server
         statement_descriptor: 'LOJA DECASTRO',
         expires: false
       };
@@ -1189,18 +832,17 @@
         } else {
           alert('❌ Erro ao conectar com Mercado Pago!\n\nVerifique sua conexão e tente novamente.');
         }
+        
+        // Show PIX troubleshooting info
+        setTimeout(() => {
+          if (confirm('💡 DICA SOBRE PIX:\n\nSe o PIX está desabilitado no checkout:\n\n1. Acesse sua conta Mercado Pago\n2. Vá em "Seu negócio" > "Configurações"\n3. Ative a opção "PIX" em métodos de pagamento\n\nDeseja abrir as configurações do Mercado Pago?')) {
+            window.open('https://www.mercadopago.com.br/settings/account', '_blank');
+          }
+        }, 2000);
       }
     }
-    
-    function getPaymentMethodName(method) {
-      const methods = {
-        'pix': 'PIX',
-        'credit_card': 'Cartão de Crédito',
-        'boleto': 'Boleto Bancário'
-      };
-      return methods[method] || method;
-    }
-    
+
+    // Payment Status Handling
     function checkPaymentStatus() {
       const urlParams = new URLSearchParams(window.location.search);
       const status = urlParams.get('status');
@@ -1263,7 +905,7 @@
           showToast('🎉 Pagamento aprovado! Venda registrada com sucesso!');
           
           setTimeout(() => {
-            alert(`✅ PAGAMENTO APROVADO COM SUCESSO!\n\n💰 Cliente: ${sale.customer}\n💳 Método: ${sale.paymentMethod}\n💵 Total: R$ ${sale.total.toFixed(2)}\n🎣 Venda #${sale.id}\n\n🎉 O dinheiro já está na sua conta Mercado Pago!\n\nObrigado pela preferência!`);
+            alert(`✅ PAGAMENTO APROVADO COM SUCESSO!\n\n💰 Cliente: ${sale.customer}\n💳 Método: ${sale.paymentMethod}\n💵 Total: R$ ${sale.total.toFixed(2)}\n🎯 Venda #${sale.id}\n\n🎉 O dinheiro já está na sua conta Mercado Pago!\n\nObrigado pela preferência!`);
             
             // Switch to sales tab to show the new sale
             switchTab('vendas');
@@ -1285,7 +927,350 @@
           console.log('Status de pagamento desconhecido:', status);
       }
     }
-    
+
+    function getPaymentMethodName(method) {
+      const methods = {
+        'pix': 'PIX',
+        'credit_card': 'Cartão de Crédito',
+        'boleto': 'Boleto Bancário'
+      };
+      return methods[method] || method;
+    }
+
+    function showPendingSaleIndicator() {
+      const pendingSale = localStorage.getItem('pendingSale');
+      
+      if (pendingSale) {
+        const data = JSON.parse(pendingSale);
+        const timeElapsed = Math.floor((Date.now() - new Date(data.createdAt).getTime()) / 1000 / 60);
+        
+        showToast(`⏰ Venda pendente: R$ ${data.total.toFixed(2)} (${timeElapsed} min atrás)`);
+        
+        // Add a button to check payment status
+        setTimeout(() => {
+          if (confirm(`⏰ Você tem uma venda pendente de R$ ${data.total.toFixed(2)}\n\nDeseja verificar o status do pagamento?`)) {
+            window.open(`https://www.mercadopago.com.br/activities`, '_blank');
+          }
+        }, 2000);
+      }
+    }
+
+    // Sales Management Functions
+    function createSale(customerName = 'Cliente Anônimo', customerEmail = '', paymentMethod = 'pix') {
+      if (cart.length === 0) return null;
+      
+      const saleItems = cart.map(item => {
+        const product = products.find(p => p.id === item.productId);
+        return {
+          productId: item.productId,
+          productName: product.name,
+          category: product.category,
+          price: product.price,
+          quantity: item.quantity,
+          subtotal: product.price * item.quantity
+        };
+      });
+      
+      const sale = {
+        id: Date.now(),
+        date: new Date().toISOString(),
+        customer: customerName,
+        email: customerEmail,
+        paymentMethod: getPaymentMethodName(paymentMethod),
+        items: saleItems,
+        total: saleItems.reduce((sum, item) => sum + item.subtotal, 0),
+        status: 'Concluída'
+      };
+      
+      sales.push(sale);
+      saveToStorage();
+      return sale;
+    }
+
+    function renderSalesList() {
+      const tbody = document.getElementById('sales-table');
+      tbody.innerHTML = '';
+
+      if (sales.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+              <div class="text-4xl mb-2">📊</div>
+              <p>Nenhuma venda realizada ainda</p>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Sort sales by date (newest first)
+      const sortedSales = [...sales].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      sortedSales.forEach(sale => {
+        const date = new Date(sale.date);
+        const formattedDate = date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        
+        const itemsText = sale.items.map(item => 
+          `${item.productName} (${item.quantity}x)`
+        ).join(', ');
+        
+        const paymentIcon = {
+          'PIX': '🚀',
+          'Cartão de Crédito': '💳',
+          'Boleto Bancário': '📄'
+        };
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            ${formattedDate}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <div>${sale.customer}</div>
+            <div class="text-xs text-gray-500">${sale.email || ''}</div>
+          </td>
+          <td class="px-6 py-4 text-sm text-gray-900 max-w-md">
+            <div class="truncate" title="${itemsText}">${itemsText}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <span class="flex items-center gap-1">
+              ${paymentIcon[sale.paymentMethod] || '💳'}
+              ${sale.paymentMethod || 'PIX'}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
+            R$ ${sale.total.toFixed(2)}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+              ${sale.status}
+            </span>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function updateSalesMetrics() {
+      // Total revenue
+      const totalRevenue = sales.reduce((sum, sale) => sum + sale.total, 0);
+      document.getElementById('total-revenue').textContent = `R$ ${totalRevenue.toFixed(2)}`;
+
+      // Today's sales
+      const today = new Date().toDateString();
+      const todaySales = sales.filter(sale => new Date(sale.date).toDateString() === today);
+      document.getElementById('today-sales').textContent = todaySales.length;
+
+      // Total products sold
+      const totalProductsSold = sales.reduce((sum, sale) => 
+        sum + sale.items.reduce((itemSum, item) => itemSum + item.quantity, 0), 0
+      );
+      document.getElementById('total-products-sold').textContent = totalProductsSold;
+
+      // Best seller
+      const productSales = {};
+      sales.forEach(sale => {
+        sale.items.forEach(item => {
+          if (!productSales[item.productName]) {
+            productSales[item.productName] = 0;
+          }
+          productSales[item.productName] += item.quantity;
+        });
+      });
+
+      const bestSeller = Object.keys(productSales).length > 0 
+        ? Object.keys(productSales).reduce((a, b) => productSales[a] > productSales[b] ? a : b)
+        : '-';
+      
+      document.getElementById('best-seller').textContent = bestSeller.length > 20 
+        ? bestSeller.substring(0, 20) + '...' 
+        : bestSeller;
+    }
+
+    // Product Form Management
+    function openProductForm(productId = null) {
+      const modal = document.getElementById('product-form-modal');
+      const title = document.getElementById('modal-title');
+      const saveBtn = document.getElementById('save-btn');
+      
+      // Populate categories first
+      populateCategories();
+      
+      modal.classList.remove('hidden');
+      
+      if (productId) {
+        const product = products.find(p => p.id === productId);
+        editingProduct = product;
+        title.textContent = 'Editar Produto';
+        saveBtn.textContent = 'Atualizar';
+        document.getElementById('product-name').value = product.name;
+        document.getElementById('product-price').value = product.price;
+        // For edit mode, we can't set file input value, but we can show current image
+        if (product.image) {
+          const preview = document.getElementById('image-preview');
+          const previewImg = document.getElementById('preview-img');
+          previewImg.src = product.image;
+          preview.classList.remove('hidden');
+        }
+        document.getElementById('product-description').value = product.description || '';
+        document.getElementById('product-category').value = product.category;
+      } else {
+        editingProduct = null;
+        title.textContent = 'Cadastrar Produto';
+        saveBtn.textContent = 'Cadastrar';
+        document.getElementById('product-name').value = '';
+        document.getElementById('product-price').value = '';
+        document.getElementById('product-image').value = '';
+        // Clear image preview
+        document.getElementById('image-preview').classList.add('hidden');
+        document.getElementById('product-description').value = '';
+        document.getElementById('product-category').value = '';
+      }
+    }
+
+    function closeProductForm() {
+      document.getElementById('product-form-modal').classList.add('hidden');
+      editingProduct = null;
+    }
+
+    async function saveProduct() {
+      const name = document.getElementById('product-name').value;
+      const price = parseFloat(document.getElementById('product-price').value);
+      const category = document.getElementById('product-category').value;
+      const description = document.getElementById('product-description').value;
+      const imageFileInput = document.getElementById('product-image');
+      const imageFile = imageFileInput.files[0];
+
+      if (!name || !price || !category) {
+        alert('Por favor, preencha todos os campos obrigatórios (Nome, Preço e Categoria)');
+        return;
+      }
+      
+      let imageData = null;
+      
+      // Handle image upload
+      if (imageFile) {
+        try {
+          imageData = await handleImageUpload(imageFile);
+        } catch (error) {
+          alert('Erro ao processar imagem. Tente novamente.');
+          return;
+        }
+      } else if (editingProduct && editingProduct.image) {
+        // Keep existing image if editing and no new file selected
+        imageData = editingProduct.image;
+      }
+
+      // Use uploaded image data or fallback to placeholder
+      const finalImageUrl = imageData || `https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&q=80`;
+
+      if (editingProduct) {
+        const index = products.findIndex(p => p.id === editingProduct.id);
+        products[index] = { ...products[index], name, price, category, description, image: finalImageUrl };
+      } else {
+        const newProduct = {
+          id: Date.now(),
+          name,
+          price,
+          category,
+          description,
+          image: finalImageUrl
+        };
+        products.push(newProduct);
+      }
+
+      saveToStorage();
+      closeProductForm();
+      renderProductsList();
+      renderProducts();
+      updateProductsCount();
+      showToast(editingProduct ? 'Produto atualizado!' : 'Produto cadastrado!');
+    }
+
+    function editProduct(id) {
+      openProductForm(id);
+    }
+
+    function deleteProduct(id) {
+      if (confirm('Tem certeza que deseja excluir este produto?')) {
+        products = products.filter(p => p.id !== id);
+        saveToStorage();
+        renderProductsList();
+        renderProducts();
+        updateProductsCount();
+        showToast('Produto excluído!');
+      }
+    }
+
+    // Category Management Functions
+    function openCategoryModal() {
+      document.getElementById('category-modal').classList.remove('hidden');
+      document.getElementById('category-name').value = '';
+      document.getElementById('category-name').focus();
+    }
+
+    function closeCategoryModal() {
+      document.getElementById('category-modal').classList.add('hidden');
+    }
+
+    function saveCategory() {
+      const categoryName = document.getElementById('category-name').value.trim();
+      
+      if (!categoryName) {
+        alert('Por favor, digite o nome da categoria.');
+        return;
+      }
+      
+      // Check if category already exists (case insensitive)
+      const existingCategory = categories.find(cat => 
+        cat.toLowerCase() === categoryName.toLowerCase()
+      );
+      
+      if (existingCategory) {
+        alert('Esta categoria já existe!');
+        return;
+      }
+      
+      // Add new category
+      categories.push(categoryName);
+      categories.sort(); // Keep alphabetical order
+      
+      // Save to localStorage
+      localStorage.setItem('categories', JSON.stringify(categories));
+      
+      // Update category select
+      populateCategories();
+      
+      // Select the new category
+      document.getElementById('product-category').value = categoryName;
+      
+      // Close modal
+      closeCategoryModal();
+      
+      showToast(`✅ Categoria "${categoryName}" criada com sucesso!`);
+    }
+
+    function populateCategories() {
+      const select = document.getElementById('product-category');
+      const currentValue = select.value;
+      
+      // Clear existing options except the first one
+      select.innerHTML = '<option value="">Selecione uma categoria</option>';
+      
+      // Add all categories
+      categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        select.appendChild(option);
+      });
+      
+      // Restore selection if it was set
+      if (currentValue) {
+        select.value = currentValue;
+      }
+    }
+
     // Image upload functions
     function clearImagePreview() {
       document.getElementById('product-image').value = '';
@@ -1315,23 +1300,30 @@
         reader.readAsDataURL(file);
       });
     }
-    
-    function showPendingSaleIndicator() {
-      const pendingSale = localStorage.getItem('pendingSale');
+
+    // Utility Functions
+    function updateProductsCount() {
+      document.getElementById('products-count').textContent = products.length;
+    }
+
+    function updateSalesCount() {
+      document.getElementById('sales-count').textContent = sales.length;
+    }
+
+    function saveToStorage() {
+      localStorage.setItem('products', JSON.stringify(products));
+      localStorage.setItem('cart', JSON.stringify(cart));
+      localStorage.setItem('sales', JSON.stringify(sales));
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.remove('hidden');
       
-      if (pendingSale) {
-        const data = JSON.parse(pendingSale);
-        const timeElapsed = Math.floor((Date.now() - new Date(data.createdAt).getTime()) / 1000 / 60);
-        
-        showToast(`⏰ Venda pendente: R$ ${data.total.toFixed(2)} (${timeElapsed} min atrás)`);
-        
-        // Add a button to check payment status
-        setTimeout(() => {
-          if (confirm(`⏰ Você tem uma venda pendente de R$ ${data.total.toFixed(2)}\n\nDeseja verificar o status do pagamento?`)) {
-            window.open(`https://www.mercadopago.com.br/activities`, '_blank');
-          }
-        }, 2000);
-      }
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
     }
 
     // Initialize App
@@ -1379,38 +1371,19 @@
         });
       }
       
-      // Add event listener for category selection
-      document.addEventListener('change', function(e) {
-        if (e.target.id === 'product-category' && e.target.value === 'nova-categoria') {
-          toggleNewCategoryInput();
-        }
-      });
+      // Add Enter key handler for category creation
+      const categoryNameInput = document.getElementById('category-name');
+      if (categoryNameInput) {
+        categoryNameInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            saveCategory();
+          }
+        });
+      }
       
-      // Add enter key support for new category input
-      document.addEventListener('keypress', function(e) {
-        if (e.target.id === 'new-category-input' && e.key === 'Enter') {
-          addNewCategory();
-        }
-      });
-      
-      // Test button functionality
-      const testBtn = document.querySelector('button[onclick="openProductForm()"]');
-      console.log('Botões encontrados:', document.querySelectorAll('button[onclick="openProductForm()"]').length);
-      
-      // Initialize icons after a brief delay to ensure all elements are rendered
-      setTimeout(() => {
-        if (typeof lucide !== 'undefined') {
-          lucide.createIcons();
-        }
-        console.log('Loja inicializada!');
-      }, 100);
-    });
-
-    // Close modal when clicking outside
-    document.addEventListener('click', function(e) {
-      const modal = document.getElementById('product-form-modal');
-      if (e.target === modal) {
-        closeProductForm();
+      // Initialize Lucide icons
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
       }
     });
   </script>
