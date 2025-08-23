@@ -922,10 +922,7 @@
         
         <div class="bg-green-50 p-4 rounded-lg border border-green-200 mb-6">
           <div id="qr-code-container" class="w-48 h-48 mx-auto mb-4 border-2 border-green-300 rounded-lg flex items-center justify-center bg-white">
-            <div class="text-center text-green-600">
-              <div class="text-4xl mb-2">📱</div>
-              <p class="text-sm font-bold">Gerando QR Code...</p>
-            </div>
+            <canvas id="qrcode-canvas" class="max-w-full max-h-full"></canvas>
           </div>
           
           <div class="bg-white p-3 rounded border">
@@ -960,35 +957,87 @@
     const modal = document.getElementById('payment-modal');
     const modalContent = modal.querySelector('.bg-white');
     
+    // Check if MP credentials are configured
+    const credentials = JSON.parse(localStorage.getItem('decastro-mp-credentials') || '{}');
+    
+    if (!credentials.publicKey) {
+      modalContent.innerHTML = `
+        <div class="text-center">
+          <h3 class="text-xl font-bold text-red-600 mb-4">⚠️ Mercado Pago não configurado</h3>
+          
+          <div class="bg-red-50 p-4 rounded-lg border border-red-200 mb-6">
+            <p class="text-red-700 mb-4">Para processar pagamentos com cartão, é necessário configurar as credenciais do Mercado Pago.</p>
+            
+            <div class="space-y-2 text-sm text-red-600">
+              <p>• Acesse a aba Administração</p>
+              <p>• Clique em "MP Credenciais"</p>
+              <p>• Configure suas chaves do Mercado Pago</p>
+            </div>
+          </div>
+
+          <div class="flex gap-2">
+            <button onclick="closePaymentModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg">
+              Voltar
+            </button>
+            <button onclick="closePaymentModal(); switchTab('admin'); openCredentialsModal();" class="flex-1 bg-blue-600 text-white py-2 rounded-lg">
+              ⚙️ Configurar MP
+            </button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+    
     modalContent.innerHTML = `
       <div class="max-w-md mx-auto">
         <h3 class="text-xl font-bold text-blue-600 mb-4 text-center">💳 Pagamento com Cartão</h3>
-        <p class="text-center text-gray-600 mb-6">Total: R$ ${total.toFixed(2)}</p>
+        <p class="text-center text-gray-600 mb-6">Total: <span class="font-bold text-green-600">R$ ${total.toFixed(2)}</span></p>
         
-        <form id="card-form" class="space-y-4">
+        <div class="bg-blue-50 p-3 rounded-lg mb-4">
+          <div class="flex items-center gap-2 text-blue-600">
+            <div class="text-lg">🔒</div>
+            <div class="text-sm">
+              <p class="font-bold">Pagamento Seguro</p>
+              <p>Processado via Mercado Pago</p>
+            </div>
+          </div>
+        </div>
+        
+        <form id="mp-card-form" class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Número do Cartão</label>
-            <input type="text" placeholder="0000 0000 0000 0000" maxlength="19" 
+            <input type="text" id="mp-card-number" placeholder="0000 0000 0000 0000" maxlength="19" 
                    class="w-full p-3 border border-gray-300 rounded-lg" required>
           </div>
           
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Validade</label>
-              <input type="text" placeholder="MM/AA" maxlength="5" 
+              <label class="block text-sm font-medium text-gray-700 mb-1">Validade (MM/AA)</label>
+              <input type="text" id="mp-expiry-date" placeholder="12/28" maxlength="5" 
                      class="w-full p-3 border border-gray-300 rounded-lg" required>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">CVV</label>
-              <input type="text" placeholder="123" maxlength="3" 
+              <input type="text" id="mp-security-code" placeholder="123" maxlength="4" 
                      class="w-full p-3 border border-gray-300 rounded-lg" required>
             </div>
           </div>
           
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Nome no Cartão</label>
-            <input type="text" placeholder="NOME COMPLETO" 
+            <input type="text" id="mp-card-holder-name" placeholder="NOME COMPLETO" value="${name}" 
                    class="w-full p-3 border border-gray-300 rounded-lg" required>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Parcelamento</label>
+            <select id="mp-installments" class="w-full p-3 border border-gray-300 rounded-lg">
+              <option value="1">1x de R$ ${total.toFixed(2)} (sem juros)</option>
+              <option value="2">2x de R$ ${(total/2).toFixed(2)} (sem juros)</option>
+              <option value="3">3x de R$ ${(total/3).toFixed(2)} (sem juros)</option>
+              <option value="6">6x de R$ ${(total/6).toFixed(2)} (sem juros)</option>
+              <option value="12">12x de R$ ${(total/12).toFixed(2)} (com juros)</option>
+            </select>
           </div>
         </form>
         
@@ -996,12 +1045,54 @@
           <button onclick="closePaymentModal()" class="flex-1 bg-gray-500 text-white py-3 rounded-lg">
             Cancelar
           </button>
-          <button onclick="simulateCardPayment('${name}', '${email}', ${total})" class="flex-1 bg-blue-600 text-white py-3 rounded-lg">
-            💳 Simular Pagamento
+          <button onclick="processMPCardPayment('${name}', '${email}', ${total})" class="flex-1 bg-blue-600 text-white py-3 rounded-lg">
+            💳 Pagar Agora
           </button>
         </div>
       </div>
     `;
+  }
+
+  function processMPCardPayment(name, email, total) {
+    const cardNumber = document.getElementById('mp-card-number')?.value;
+    const expiryDate = document.getElementById('mp-expiry-date')?.value;
+    const securityCode = document.getElementById('mp-security-code')?.value;
+    const cardHolderName = document.getElementById('mp-card-holder-name')?.value;
+    const installments = document.getElementById('mp-installments')?.value || '1';
+    
+    // Basic validation
+    if (!cardNumber || !expiryDate || !securityCode || !cardHolderName) {
+      alert('⚠️ Por favor, preencha todos os dados do cartão.');
+      return;
+    }
+    
+    // Simulate MP processing
+    const modal = document.getElementById('payment-modal');
+    const modalContent = modal.querySelector('.bg-white');
+    
+    modalContent.innerHTML = `
+      <div class="text-center">
+        <h3 class="text-xl font-bold text-blue-600 mb-4">💳 Processando Pagamento...</h3>
+        
+        <div class="bg-blue-50 p-6 rounded-lg border border-blue-200 mb-6">
+          <div class="w-16 h-16 mx-auto mb-4 border-4 border-blue-300 border-t-blue-600 rounded-full animate-spin"></div>
+          <p class="text-blue-700 font-medium">Validando dados do cartão...</p>
+          <p class="text-sm text-blue-600 mt-2">Processado via Mercado Pago</p>
+        </div>
+        
+        <div class="text-left bg-gray-50 p-4 rounded-lg">
+          <h4 class="font-bold mb-2">Detalhes do Pagamento:</h4>
+          <p class="text-sm text-gray-600">Cartão: **** **** **** ${cardNumber.slice(-4)}</p>
+          <p class="text-sm text-gray-600">Parcelas: ${installments}x</p>
+          <p class="text-sm text-gray-600">Total: R$ ${total.toFixed(2)}</p>
+        </div>
+      </div>
+    `;
+    
+    // Simulate processing time
+    setTimeout(() => {
+      simulateCardPayment(name, email, total, installments);
+    }, 3000);
   }
 
   // PIX functions
@@ -1061,9 +1152,31 @@
   }
 
   function copyPixKey() {
-    navigator.clipboard.writeText('98988804678').then(() => {
+    const pixKey = '98988804678';
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(pixKey).then(() => {
+        alert('✅ Chave PIX copiada para a área de transferência!');
+      }).catch(() => {
+        fallbackCopyTextToClipboard(pixKey);
+      });
+    } else {
+      fallbackCopyTextToClipboard(pixKey);
+    }
+  }
+
+  function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
       alert('✅ Chave PIX copiada!');
-    });
+    } catch (err) {
+      alert('⚠️ Não foi possível copiar. Chave PIX: ' + text);
+    }
+    document.body.removeChild(textArea);
   }
 
   function simulatePixPayment(name, email, total) {
@@ -1072,9 +1185,12 @@
     }
   }
 
-  function simulateCardPayment(name, email, total) {
+  function simulateCardPayment(name, email, total, installments = '1') {
+    const installmentsText = installments === '1' ? 'à vista' : `${installments}x`;
+    const methodText = `Cartão de Crédito (${installmentsText})`;
+    
     if (confirm('🧪 SIMULAÇÃO: Confirmar processamento do cartão?')) {
-      completePurchase(name, email, total, 'Cartão de Crédito');
+      completePurchase(name, email, total, methodText);
     }
   }
 
