@@ -889,9 +889,13 @@
   }
 
   function processPayment() {
+    console.log('🔍 Iniciando processPayment...');
+    
     const name = document.getElementById('customer-name').value.trim();
     const email = document.getElementById('customer-email').value.trim();
     const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value;
+    
+    console.log('📄 Dados coletados:', { name, email, paymentMethod, cartItems: cartItems.length });
 
     if (!name || !email) {
       alert('⚠️ Por favor, preencha nome e email.');
@@ -907,8 +911,11 @@
 
     if (paymentMethod === 'pix') {
       showPixPayment(name, email, total);
-    } else {
+    } else if (paymentMethod === 'credit_card') {
       showCardPayment(name, email, total);
+    } else {
+      alert('⚠️ Selecione um método de pagamento.');
+      return;
     }
   }
 
@@ -972,8 +979,21 @@
   }
 
   function showCardPayment(name, email, total) {
+    console.log('💳 Iniciando showCardPayment:', { name, email, total });
+    
     const modal = document.getElementById('payment-modal');
+    if (!modal) {
+      console.error('⚠️ Modal payment-modal não encontrado!');
+      alert('⚠️ Erro: Modal de pagamento não encontrado.');
+      return;
+    }
+    
     const modalContent = modal.querySelector('.bg-white');
+    if (!modalContent) {
+      console.error('⚠️ Conteúdo do modal não encontrado!');
+      alert('⚠️ Erro: Conteúdo do modal não encontrado.');
+      return;
+    }
     
     // Check if MP credentials are configured
     const credentials = JSON.parse(localStorage.getItem('decastro-mp-credentials') || '{}');
@@ -1011,6 +1031,105 @@
 
   }
   
+  function showCardBrandsSelection(name, email, total) {
+    console.log('🃏 Iniciando showCardBrandsSelection:', { name, email, total });
+    
+    const modal = document.getElementById('payment-modal');
+    if (!modal) {
+      console.error('⚠️ Modal não encontrado em showCardBrandsSelection!');
+      return;
+    }
+    
+    const modalContent = modal.querySelector('.bg-white');
+    if (!modalContent) {
+      console.error('⚠️ Conteúdo do modal não encontrado!');
+      return;
+    }
+    
+    const savedCards = JSON.parse(localStorage.getItem('decastro-saved-cards') || '[]');
+    console.log('📋 Cartões salvos encontrados:', savedCards.length);
+    
+    // Group cards by brand
+    const cardsByBrand = {};
+    savedCards.forEach(card => {
+      if (!cardsByBrand[card.brand]) {
+        cardsByBrand[card.brand] = [];
+      }
+      cardsByBrand[card.brand].push(card);
+    });
+    
+    modalContent.innerHTML = `
+      <div class="max-w-2xl mx-auto">
+        <h3 class="text-xl font-bold text-blue-600 mb-4 text-center">💳 Escolha a Bandeira do Cartão</h3>
+        <p class="text-center text-gray-600 mb-6">Total: <span class="font-bold text-green-600">R$ ${total.toFixed(2)}</span></p>
+        
+        <!-- Card Brands Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          
+          <!-- Visa -->
+          <div class="brand-card border-2 border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:bg-blue-50 cursor-pointer text-center transition-all" 
+               onclick="selectBrand('visa', '${name}', '${email}', ${total})">
+            <div class="text-4xl mb-2 text-blue-600">💳</div>
+            <p class="font-bold text-blue-800">VISA</p>
+            <p class="text-xs text-gray-500 mt-1">${cardsByBrand.visa ? cardsByBrand.visa.length + ' salvo(s)' : 'Novo'}</p>
+          </div>
+          
+          <!-- Mastercard -->
+          <div class="brand-card border-2 border-gray-200 rounded-lg p-4 hover:border-red-500 hover:bg-red-50 cursor-pointer text-center transition-all" 
+               onclick="selectBrand('mastercard', '${name}', '${email}', ${total})">
+            <div class="text-4xl mb-2 text-red-600">💳</div>
+            <p class="font-bold text-red-800">MASTERCARD</p>
+            <p class="text-xs text-gray-500 mt-1">${cardsByBrand.mastercard ? cardsByBrand.mastercard.length + ' salvo(s)' : 'Novo'}</p>
+          </div>
+          
+          <!-- Elo -->
+          <div class="brand-card border-2 border-gray-200 rounded-lg p-4 hover:border-yellow-500 hover:bg-yellow-50 cursor-pointer text-center transition-all" 
+               onclick="selectBrand('elo', '${name}', '${email}', ${total})">
+            <div class="text-4xl mb-2 text-yellow-600">💳</div>
+            <p class="font-bold text-yellow-800">ELO</p>
+            <p class="text-xs text-gray-500 mt-1">${cardsByBrand.elo ? cardsByBrand.elo.length + ' salvo(s)' : 'Novo'}</p>
+          </div>
+          
+          <!-- American Express -->
+          <div class="brand-card border-2 border-gray-200 rounded-lg p-4 hover:border-green-500 hover:bg-green-50 cursor-pointer text-center transition-all" 
+               onclick="selectBrand('amex', '${name}', '${email}', ${total})">
+            <div class="text-4xl mb-2 text-green-600">💳</div>
+            <p class="font-bold text-green-800">AMEX</p>
+            <p class="text-xs text-gray-500 mt-1">${cardsByBrand.amex ? cardsByBrand.amex.length + ' salvo(s)' : 'Novo'}</p>
+          </div>
+          
+        </div>
+        
+        ${savedCards.length > 0 ? `
+          <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-4">
+            <div class="text-center">
+              <div class="text-2xl mb-2">💾</div>
+              <p class="text-blue-800 font-medium">Você tem ${savedCards.length} cartão(s) cadastrado(s)</p>
+              <p class="text-sm text-blue-600">Clique na bandeira para ver seus cartões salvos</p>
+            </div>
+          </div>
+        ` : `
+          <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+            <div class="text-center">
+              <div class="text-2xl mb-2">✨</div>
+              <p class="text-gray-700 font-medium">Primeiro cartão?</p>
+              <p class="text-sm text-gray-600">Escolha a bandeira para cadastrar seu cartão</p>
+            </div>
+          </div>
+        `}
+        
+        <div class="flex gap-2">
+          <button onclick="closePaymentModal()" class="flex-1 bg-gray-500 text-white py-3 rounded-lg">
+            ← Cancelar
+          </button>
+          <button onclick="showAddCardForm('${name}', '${email}', ${total}, 'visa')" class="flex-1 bg-green-600 text-white py-3 rounded-lg">
+            ➕ Cadastrar Novo Cartão
+          </button>
+        </div>
+      </div>
+    `;
+  }
+  
   function selectBrand(brand, name, email, total) {
     const savedCards = JSON.parse(localStorage.getItem('decastro-saved-cards') || '[]');
     const cardsOfBrand = savedCards.filter(card => card.brand === brand);
@@ -1044,8 +1163,8 @@
         </h3>
         <p class="text-center text-gray-600 mb-6">Total: <span class="font-bold text-green-600">R$ ${total.toFixed(2)}</span></p>
         
-        <div class="bg-${brandStyle.bg} p-3 rounded-lg mb-4 border border-${brandStyle.border}">
-          <div class="flex items-center gap-2 text-${brandStyle.color}-700">
+        <div class="${getBrandBgClass(brand)} p-3 rounded-lg mb-4 border ${getBrandBorderClass(brand)}">
+          <div class="flex items-center gap-2 ${getBrandTextClass(brand)}">
             <div class="text-lg">🔒</div>
             <div class="text-sm">
               <p class="font-bold">${cards.length} cartão(s) ${brand.toUpperCase()} encontrado(s)</p>
@@ -1057,17 +1176,17 @@
         <!-- Cards List -->
         <div class="space-y-3 mb-4">
           ${cards.map(card => `
-            <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-${brandStyle.color}-300 cursor-pointer card-option transition-all" 
+            <div class="border-2 border-gray-200 rounded-lg p-4 hover:${getBrandHoverClass(brand)} cursor-pointer card-option transition-all" 
                  onclick="selectSpecificCard('${card.id}')" data-card-id="${card.id}">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                  <div class="text-2xl text-${brandStyle.color}-600">${getCardIcon(card.brand)}</div>
+                  <div class="text-2xl ${getBrandColorClass(brand)}">${getCardIcon(card.brand)}</div>
                   <div>
                     <p class="font-bold text-gray-800">**** **** **** ${card.lastFour}</p>
                     <p class="text-sm text-gray-600">${card.holderName}</p>
                   </div>
                 </div>
-                <input type="radio" name="selected-card" value="${card.id}" class="w-4 h-4 text-${brandStyle.color}-600">
+                <input type="radio" name="selected-card" value="${card.id}" class="w-4 h-4">
               </div>
             </div>
           `).join('')}
@@ -1093,7 +1212,7 @@
             ➕ Novo
           </button>
           <button id="pay-selected-btn" onclick="payWithBrandCard('${name}', '${email}', ${total})" 
-                  class="flex-1 bg-${brandStyle.color}-600 text-white py-3 rounded-lg hidden">
+                  class="flex-1 ${getBrandButtonClass(brand)} text-white py-3 rounded-lg hidden">
             💳 Pagar
           </button>
         </div>
@@ -1102,10 +1221,12 @@
   }
   
   function selectSpecificCard(cardId) {
-    // Remove previous selections
+    // Remove previous selections from all cards
     document.querySelectorAll('.card-option').forEach(card => {
+      // Remove all possible brand selection classes
       card.classList.remove('border-blue-500', 'bg-blue-50', 'border-red-500', 'bg-red-50', 
-                           'border-yellow-500', 'bg-yellow-50', 'border-green-500', 'bg-green-50');
+                           'border-yellow-500', 'bg-yellow-50', 'border-green-500', 'bg-green-50',
+                           'border-blue-300', 'border-red-300', 'border-yellow-300', 'border-green-300');
     });
     
     // Add selection to clicked card
@@ -1114,15 +1235,8 @@
       const brand = JSON.parse(localStorage.getItem('decastro-saved-cards') || '[]')
                     .find(c => c.id === cardId)?.brand || 'visa';
       
-      const brandColors = {
-        'visa': { bg: 'bg-blue-50', border: 'border-blue-500' },
-        'mastercard': { bg: 'bg-red-50', border: 'border-red-500' },
-        'elo': { bg: 'bg-yellow-50', border: 'border-yellow-500' },
-        'amex': { bg: 'bg-green-50', border: 'border-green-500' }
-      };
-      
-      const style = brandColors[brand] || brandColors.visa;
-      selectedCard.classList.add(style.border, style.bg);
+      // Add brand-specific selection classes
+      selectedCard.classList.add(getBrandBorderClass(brand), getBrandBgClass(brand));
       selectedCard.querySelector('input[type="radio"]').checked = true;
       
       // Show installments and pay button
@@ -1145,6 +1259,67 @@
     if (card) {
       showPaymentProcessing(name, email, total, card, installments);
     }
+  }
+  
+  // Brand CSS helper functions
+  function getBrandBgClass(brand) {
+    const classes = {
+      'visa': 'bg-blue-50',
+      'mastercard': 'bg-red-50', 
+      'elo': 'bg-yellow-50',
+      'amex': 'bg-green-50'
+    };
+    return classes[brand] || classes.visa;
+  }
+  
+  function getBrandBorderClass(brand) {
+    const classes = {
+      'visa': 'border-blue-500',
+      'mastercard': 'border-red-500', 
+      'elo': 'border-yellow-500',
+      'amex': 'border-green-500'
+    };
+    return classes[brand] || classes.visa;
+  }
+  
+  function getBrandTextClass(brand) {
+    const classes = {
+      'visa': 'text-blue-700',
+      'mastercard': 'text-red-700', 
+      'elo': 'text-yellow-700',
+      'amex': 'text-green-700'
+    };
+    return classes[brand] || classes.visa;
+  }
+  
+  function getBrandColorClass(brand) {
+    const classes = {
+      'visa': 'text-blue-600',
+      'mastercard': 'text-red-600', 
+      'elo': 'text-yellow-600',
+      'amex': 'text-green-600'
+    };
+    return classes[brand] || classes.visa;
+  }
+  
+  function getBrandHoverClass(brand) {
+    const classes = {
+      'visa': 'border-blue-300',
+      'mastercard': 'border-red-300', 
+      'elo': 'border-yellow-300',
+      'amex': 'border-green-300'
+    };
+    return classes[brand] || classes.visa;
+  }
+  
+  function getBrandButtonClass(brand) {
+    const classes = {
+      'visa': 'bg-blue-600 hover:bg-blue-700',
+      'mastercard': 'bg-red-600 hover:bg-red-700', 
+      'elo': 'bg-yellow-600 hover:bg-yellow-700',
+      'amex': 'bg-green-600 hover:bg-green-700'
+    };
+    return classes[brand] || classes.visa;
   }
   
   // Card management functions
