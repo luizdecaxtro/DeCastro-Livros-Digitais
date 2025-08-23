@@ -33,7 +33,7 @@
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-  
+
   <!-- Header -->
   <header class="bg-white shadow-sm border-b">
     <div class="max-w-6xl mx-auto px-4 py-4">
@@ -57,13 +57,22 @@
         <button onclick="switchTab('vendas')" id="tab-vendas" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors">
           💰 Vendas (<span id="sales-count">0</span>)
         </button>
+        <button onclick="switchTab('termos')" id="tab-termos" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors">
+          📜 Termos de Uso
+        </button>
+        <button onclick="switchTab('privacidade')" id="tab-privacidade" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors">
+          🔒 Privacidade
+        </button>
+        <button onclick="switchTab('contato')" id="tab-contato" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors">
+          📞 Contato
+        </button>
       </div>
     </div>
   </nav>
 
   <!-- Main Content -->
   <main class="max-w-6xl mx-auto px-4 py-8">
-    
+
     <!-- Store Tab -->
     <div id="loja-content" class="fade-in">
       <div class="mb-6 flex justify-between items-center">
@@ -186,6 +195,163 @@
         </div>
       </div>
     </div>
+
+    <!-- Terms Tab -->
+    <div id="termos-content" class="hidden fade-in">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+          📜 Termos de Uso
+        </h2>
+        <div class="prose max-w-none">
+          <p class="mb-4"><strong>Última atualização:</strong> Janeiro de 2024</p>
+          
+          <h3 class="text-lg font-semibold mb-2">1. Aceitação dos Termos</h3>
+          <p class="mb-4">Ao utilizar a Loja DeCastro - Produtos Digitais, você concorda com estes termos de uso.</p>
+          
+          <h3 class="text-lg font-semibold mb-2">2. Produtos e Serviços</h3>
+          <p class="mb-4">Comercializamos produtos digitais educacionais de alta qualidade. Todos os produtos são entregues digitalmente após a confirmação do pagamento.</p>
+          
+          <h3 class="text-lg font-semibold mb-2">3. Pagamentos</h3>
+          <p class="mb-4">Aceitamos pagamentos via PIX, cartão de crédito e boleto bancário através da plataforma Mercado Pago. Todos os pagamentos são processados de forma segura.</p>
+          
+          <h3 class="text-lg font-semibold mb-2">4. Política de Reembolso</h3>
+          <p class="mb-4">Garantimos reembolso integral em caso de insatisfação em até 7 dias após a compra.</p>
+          
+          <h3 class="text-lg font-semibold mb-2">5. Propriedade Intelectual</h3>
+          <p class="mb-4">Todos os produtos digitais são protegidos por direitos autorais. É proibida a redistribuição não autorizada.</p>
+          
+          <h3 class="text-lg font-semibold mb-2">6. Responsabilidades</h3>
+          <p class="mb-4">O cliente é responsável por fornecer informações corretas para a compra e entrega dos produtos.</p>
+          
+          <h3 class="text-lg font-semibold mb-2">7. Contato</h3>
+          <p class="mb-4">Para dúvidas ou suporte, entre em contato através da aba "Contato" ou pelo email contato@lojadescastro.com.br</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Privacy Tab -->
+    <div id="privacidade-content" class="hidden fade-in">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+          🔒 Política de Privacidade
+        </h2>
+        <div class="prose max-w-none">
+          <p class="mb-4"><strong>Última atualização:</strong> Janeiro de 2024</p>
+          
+          <h3 class="text-lg font-semibold mb-2">1. Informações que Coletamos</h3>
+          <p class="mb-4">Coletamos apenas as informações necessárias para processar sua compra: nome, email e dados de pagamento (processados pelo Mercado Pago).</p>
+          
+          <h3 class="text-lg font-semibold mb-2">2. Como Usamos suas Informações</h3>
+          <p class="mb-4">Utilizamos suas informações exclusivamente para:</p>
+          <ul class="list-disc list-inside mb-4">
+            <li>Processar e entregar suas compras</li>
+            <li>Enviar confirmações de pedido</li>
+            <li>Fornecer suporte ao cliente</li>
+            <li>Melhorar nossos produtos e serviços</li>
+          </ul>
+          
+          <h3 class="text-lg font-semibold mb-2">3. Compartilhamento de Dados</h3>
+          <p class="mb-4">Não compartilhamos, vendemos ou alugamos suas informações pessoais com terceiros, exceto quando necessário para processar pagamentos (Mercado Pago) ou conforme exigido por lei.</p>
+          
+          <h3 class="text-lg font-semibold mb-2">4. Segurança</h3>
+          <p class="mb-4">Implementamos medidas de segurança para proteger suas informações. Todos os pagamentos são processados através do Mercado Pago com criptografia SSL.</p>
+          
+          <h3 class="text-lg font-semibold mb-2">5. Cookies</h3>
+          <p class="mb-4">Utilizamos cookies apenas para melhorar sua experiência de navegação e lembrar itens no carrinho.</p>
+          
+          <h3 class="text-lg font-semibold mb-2">6. Seus Direitos</h3>
+          <p class="mb-4">Você tem direito a acessar, corrigir ou excluir suas informações pessoais. Entre em contato conosco para exercer esses direitos.</p>
+          
+          <h3 class="text-lg font-semibold mb-2">7. Contato</h3>
+          <p class="mb-4">Para questões sobre privacidade, contate-nos em: privacidade@lojadescastro.com.br</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Tab -->
+    <div id="contato-content" class="hidden fade-in">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+          📞 Entre em Contato
+        </h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="text-lg font-semibold mb-4">Informações de Contato</h3>
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">📧</span>
+                <div>
+                  <strong>Email:</strong><br>
+                  contato@lojadescastro.com.br
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">📞</span>
+                <div>
+                  <strong>Telefone:</strong><br>
+                  (11) 9 9999-9999
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">💬</span>
+                <div>
+                  <strong>WhatsApp:</strong><br>
+                  (11) 9 9999-9999
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">⏰</span>
+                <div>
+                  <strong>Horário de Atendimento:</strong><br>
+                  Segunda a Sexta: 9h às 18h<br>
+                  Sábado: 9h às 12h
+                </div>
+              </div>
+            </div>
+            
+            <h3 class="text-lg font-semibold mb-4 mt-8">Dados da Empresa</h3>
+            <div class="space-y-2 text-sm text-gray-600">
+              <p><strong>Razão Social:</strong> Loja DeCastro Produtos Digitais LTDA</p>
+              <p><strong>CNPJ:</strong> 00.000.000/0001-00</p>
+              <p><strong>Endereço:</strong> Rua das Flores, 123 - São Paulo/SP</p>
+              <p><strong>CEP:</strong> 01234-567</p>
+            </div>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-semibold mb-4">Envie sua Mensagem</h3>
+            <form class="space-y-4" onsubmit="sendMessage(event)">
+              <div>
+                <label class="block text-sm font-medium mb-1">Nome *</label>
+                <input type="text" id="contact-name" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Email *</label>
+                <input type="email" id="contact-email" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Assunto *</label>
+                <select id="contact-subject" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                  <option value="">Selecione um assunto</option>
+                  <option value="suporte">Suporte Técnico</option>
+                  <option value="vendas">Dúvidas sobre Vendas</option>
+                  <option value="produto">Informações sobre Produto</option>
+                  <option value="reembolso">Solicitação de Reembolso</option>
+                  <option value="outro">Outro</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Mensagem *</label>
+                <textarea id="contact-message" rows="4" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Descreva sua dúvida ou mensagem..." required></textarea>
+              </div>
+              <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                📤 Enviar Mensagem
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <!-- Product Form Modal -->
@@ -197,7 +363,7 @@
           <label class="block text-sm font-medium mb-1">Nome do Produto *</label>
           <input id="product-name" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Nome do livro digital" required>
         </div>
-        
+
         <div>
           <label class="block text-sm font-medium mb-1">Categoria *</label>
           <div class="flex gap-2">
@@ -224,12 +390,12 @@
             <button type="button" onclick="clearImagePreview()" class="ml-2 text-red-600 hover:text-red-800 text-sm">❌ Remover</button>
           </div>
         </div>
-        
+
         <div>
           <label class="block text-sm font-medium mb-1">Descrição</label>
           <textarea id="product-description" rows="3" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Breve descrição do produto digital..."></textarea>
         </div>
-        
+
         <div class="flex gap-3 pt-4">
           <button type="button" onclick="closeProductForm()" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors">
             Cancelar
@@ -249,7 +415,7 @@
         <span class="text-2xl">💳</span>
         Finalizar Pagamento
       </h3>
-      
+
       <div class="mb-4">
         <h4 class="font-semibold mb-2">Resumo do Pedido:</h4>
         <div id="payment-summary" class="bg-gray-50 p-3 rounded-lg text-sm">
@@ -259,17 +425,17 @@
           Total: R$ 0,00
         </div>
       </div>
-      
+
       <div class="mb-4">
         <label class="block text-sm font-medium mb-1">Nome Completo *</label>
         <input id="customer-name" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Digite seu nome completo" required>
       </div>
-      
+
       <div class="mb-4">
         <label class="block text-sm font-medium mb-1">Email *</label>
         <input id="customer-email" type="email" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="seu@email.com" required>
       </div>
-      
+
       <div class="mb-6">
         <label class="block text-sm font-medium mb-2">Método de Pagamento:</label>
         <div class="space-y-2">
@@ -282,7 +448,7 @@
               <div class="text-xs text-blue-600">*Deve estar ativado na sua conta MP</div>
             </div>
           </label>
-          
+
           <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
             <input type="radio" name="payment-method" value="credit_card" class="mr-3">
             <span class="text-2xl mr-3">💳</span>
@@ -291,7 +457,7 @@
               <div class="text-sm text-gray-600">Até 12x sem juros</div>
             </div>
           </label>
-          
+
           <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
             <input type="radio" name="payment-method" value="boleto" class="mr-3">
             <span class="text-2xl mr-3">📄</span>
@@ -302,7 +468,7 @@
           </label>
         </div>
       </div>
-      
+
       <div class="flex gap-3">
         <button onclick="closePaymentModal()" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors">
           Cancelar
@@ -321,7 +487,7 @@
         <span class="text-2xl">⚙️</span>
         Configuração Mercado Pago
       </h3>
-      
+
       <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
         <h4 class="font-semibold text-red-800 mb-2">🚑 IMPORTANTE - Como obter as credenciais corretas:</h4>
         <ol class="text-sm text-red-700 space-y-2">
@@ -332,7 +498,7 @@
           <li><strong>5.</strong> Copie a <strong>Public Key</strong> e <strong>Access Token</strong> completos</li>
           <li><strong>6.</strong> Cole aqui sem espaços extras</li>
         </ol>
-        
+
         <div class="mt-3 p-3 bg-yellow-100 rounded">
           <p class="text-xs text-yellow-800">
             ⚠️ <strong>ATENÇÃO:</strong> Use credenciais de <strong>PRODUÇÃO</strong> para vendas reais e <strong>TESTE</strong> apenas para testes.
@@ -340,7 +506,7 @@
           </p>
         </div>
       </div>
-      
+
       <div class="mb-4 p-3 bg-green-50 rounded-lg">
         <button onclick="window.open('https://mercadopago.com.br/developers/panel/credentials', '_blank')" class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-sm mb-2">
           🔗 Abrir Página de Credenciais
@@ -349,7 +515,7 @@
           💳 Ativar PIX na Conta MP
         </button>
       </div>
-      
+
       <div class="mb-4 p-4 bg-orange-50 border-l-4 border-orange-500 rounded-lg">
         <h4 class="font-semibold text-orange-800 mb-2">💳 PIX INATIVO? Como ativar:</h4>
         <ol class="text-sm text-orange-700 space-y-1">
@@ -364,12 +530,12 @@
           ⚠️ Sem ativar o PIX na conta, ele não funcionará no checkout!
         </p>
       </div>
-      
+
       <div class="mb-4">
         <label class="block text-sm font-medium mb-1">Public Key *</label>
         <input id="mp-public-key" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs" placeholder="TEST-xxx ou APP_USR-xxx">
       </div>
-      
+
       <div class="mb-6">
         <label class="block text-sm font-medium mb-1">Access Token *</label>
         <div class="relative">
@@ -382,7 +548,7 @@
           ⚠️ Se aparecer pontos (...........), cole o token completo novamente
         </p>
       </div>
-      
+
       <div class="flex gap-2">
         <button onclick="closeConfigModal()" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors text-sm">
           Cancelar
@@ -404,18 +570,18 @@
         <span class="text-2xl">🏷️</span>
         Nova Categoria
       </h3>
-      
+
       <div class="mb-4">
         <label class="block text-sm font-medium mb-1">Nome da Categoria *</label>
         <input id="category-name" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Culinária, Música, etc." required>
       </div>
-      
+
       <div class="mb-6 p-3 bg-blue-50 rounded-lg">
         <p class="text-sm text-blue-800">
           <strong>Dica:</strong> Crie categorias que organizem bem seus produtos. Exemplos: Culinária, Música, Idiomas, Saúde, etc.
         </p>
       </div>
-      
+
       <div class="flex gap-3">
         <button onclick="closeCategoryModal()" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors">
           Cancelar
@@ -438,7 +604,7 @@
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     let sales = JSON.parse(localStorage.getItem('sales')) || [];
     let categories = JSON.parse(localStorage.getItem('categories')) || [
-      'Programação', 'Design', 'Negócios', 'Finanças', 'Marketing', 
+      'Programação', 'Design', 'Negócios', 'Finanças', 'Marketing',
       'Desenvolvimento Pessoal', 'Fotografia', 'Literatura', 'Educação'
     ];
     let mpConfig = JSON.parse(localStorage.getItem('mpConfig')) || { publicKey: '', accessToken: '' };
@@ -479,6 +645,8 @@
       } else if (tabName === 'vendas') {
         renderSalesList();
         updateSalesMetrics();
+      } else if (tabName === 'termos' || tabName === 'privacidade' || tabName === 'contato') {
+        // Static content tabs - no rendering needed
       }
     }
 
@@ -566,7 +734,7 @@
     // Cart Management
     function addToCart(productId) {
       const existingItem = cart.find(item => item.productId === productId);
-      
+
       if (existingItem) {
         existingItem.quantity += 1;
       } else {
@@ -575,7 +743,7 @@
           quantity: 1
         });
       }
-      
+
       saveToStorage();
       updateCartCount();
       showToast('Produto adicionado ao carrinho!');
@@ -664,13 +832,13 @@
     // Checkout and Payment
     function checkout() {
       if (cart.length === 0) return;
-      
+
       // Check if Mercado Pago is configured
       if (!mpConfig.publicKey || !mpConfig.accessToken) {
         alert('⚠️ Configure o Mercado Pago primeiro!\n\nVá em Administração > MP Config para adicionar suas credenciais.');
         return;
       }
-      
+
       openPaymentModal();
     }
 
@@ -684,11 +852,11 @@
     function closeConfigModal() {
       document.getElementById('config-modal').classList.add('hidden');
     }
-    
+
     function toggleTokenVisibility() {
       const tokenInput = document.getElementById('mp-access-token');
       const toggleIcon = document.getElementById('toggle-icon');
-      
+
       if (tokenInput.type === 'password') {
         tokenInput.type = 'text';
         toggleIcon.textContent = '🙈'; // see no evil monkey
@@ -701,29 +869,29 @@
     async function testCredentials() {
       const publicKey = document.getElementById('mp-public-key').value.trim();
       const accessToken = document.getElementById('mp-access-token').value.trim();
-      
+
       if (!publicKey || !accessToken) {
         alert('⚠️ Preencha as credenciais antes de testar.');
         return;
       }
-      
+
       if (!accessToken.startsWith('APP_USR-') && !accessToken.startsWith('TEST-')) {
         alert('⚠️ Access Token deve começar com "APP_USR-" ou "TEST-"');
         return;
       }
-      
+
       showToast('🧪 Testando credenciais...');
-      
+
       // Advanced diagnostics
       console.log('=== TESTE DE CREDENCIAIS - DEBUG ===');
       console.log('Public Key:', publicKey.substring(0, 20) + '...');
       console.log('Access Token:', accessToken.substring(0, 20) + '...');
       console.log('Access Token length:', accessToken.length);
-      
+
       try {
         // First try: Direct API test
         console.log('Tentativa 1: Teste direto da API...');
-        
+
         const response = await fetch('https://api.mercadopago.com/v1/account/settings', {
           method: 'GET',
           headers: {
@@ -733,16 +901,16 @@
           },
           mode: 'cors'
         });
-        
+
         console.log('Response status:', response.status);
         console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-        
+
         if (response.ok) {
           const data = await response.json();
           console.log('API Response:', data);
-          
+
           showToast('✅ Credenciais válidas!');
-          
+
           // Check PIX availability
           let pixStatus = '❌ Não verificado';
           try {
@@ -757,40 +925,40 @@
           } catch (e) {
             console.log('PIX check failed:', e);
           }
-          
+
           alert(`✅ SUCESSO!\n\nCredenciais funcionando perfeitamente!\n\n📊 Detalhes da conta:\n• ID: ${data.id || 'N/A'}\n• País: ${data.country_id || 'N/A'}\n• Status: Ativa\n• PIX: ${pixStatus}\n\n${pixStatus.includes('Inativo') ? '⚠️ Para ativar PIX, vá em "Seu negócio" > "Configurações" > "Métodos de pagamento" no Mercado Pago.' : ''}`);
-          
+
         } else {
           const errorData = await response.text();
           console.log('API Error Response:', errorData);
           throw new Error(`HTTP ${response.status}: ${errorData}`);
         }
-        
+
       } catch (error) {
         console.error('=== ERRO DETALHADO ===');
         console.error('Error type:', error.constructor.name);
         console.error('Error message:', error.message);
         console.error('Full error:', error);
-        
+
         showToast('🔍 Tentando método alternativo...');
-        
+
         // Fallback: Test with simplified approach
         try {
           console.log('Tentativa 2: Método alternativo...');
-          
+
           // Save credentials and test with actual payment flow
           const testConfig = { publicKey, accessToken };
           localStorage.setItem('mpTestConfig', JSON.stringify(testConfig));
-          
+
           showToast('⚠️ Teste direto falhou!');
-          
+
           alert(`⚠️ ERRO DE CONEXÃO COM API\n\nO teste direto falhou, mas suas credenciais podem estar corretas.\n\n📊 Detalhes técnicos:\n• Erro: ${error.message}\n• Public Key: Válida (formato correto)\n• Access Token: Válido (formato correto)\n\n🚑 SOLUÇÃO ALTERNATIVA:\n\n1. ✅ Salve as credenciais mesmo assim\n2. 🛋️ Teste um pagamento real na loja\n3. 🔍 Se funcionar, o problema é apenas no teste\n4. 👍 Se não funcionar, pode ser restrição da conta\n\n💡 Isso pode ser um problema de CORS/firewall, não das credenciais!`);
-          
+
         } catch (fallbackError) {
           console.error('Fallback also failed:', fallbackError);
-          
+
           let errorMsg = '❌ ERRO PERSISTENTE:\n\n';
-          
+
           if (error.message.includes('401')) {
             errorMsg += '🔑 Access Token inválido ou expirado.';
           } else if (error.message.includes('403')) {
@@ -800,9 +968,9 @@
           } else {
             errorMsg += '🌐 Erro de conexão desconhecido.';
           }
-          
+
           errorMsg += '\n\n📝 Logs salvos no console (F12) para diagnóstico.';
-          
+
           alert(errorMsg);
         }
       }
@@ -811,32 +979,32 @@
     function saveConfiguration() {
       const publicKey = document.getElementById('mp-public-key').value.trim();
       const accessToken = document.getElementById('mp-access-token').value.trim();
-      
+
       if (!publicKey || !accessToken) {
         alert('Por favor, preencha ambas as credenciais.');
         return;
       }
-      
+
       // Validate format
       if (!publicKey.startsWith('APP_USR-') && !publicKey.startsWith('TEST-')) {
         alert('⚠️ Public Key deve começar com "APP_USR-" ou "TEST-"');
         return;
       }
-      
+
       if (!accessToken.startsWith('APP_USR-') && !accessToken.startsWith('TEST-')) {
         alert('⚠️ Access Token deve começar com "APP_USR-" ou "TEST-"');
         return;
       }
-      
+
       mpConfig = { publicKey, accessToken };
       localStorage.setItem('mpConfig', JSON.stringify(mpConfig));
-      
+
       // Initialize Mercado Pago
       initializeMercadoPago();
-      
+
       closeConfigModal();
       showToast('✅ Credenciais salvas! Teste um pagamento agora.');
-      
+
       // Show bypass instruction
       setTimeout(() => {
         alert('✅ CREDENCIAIS SALVAS COM SUCESSO!\n\n🚑 IMPORTANTE:\n\nSe o teste das credenciais falhou mas você tem certeza que elas estão corretas:\n\n1. 🛋️ Adicione um produto ao carrinho\n2. 💳 Teste um pagamento real\n3. 🔍 Veja se o PIX aparece ativo\n\n💡 Problemas de "teste" são comuns, mas pagamentos reais funcionam!');
@@ -854,13 +1022,13 @@
       const modal = document.getElementById('payment-modal');
       const summary = document.getElementById('payment-summary');
       const total = document.getElementById('payment-total');
-      
+
       // Calculate total
       const cartTotal = cart.reduce((sum, item) => {
         const product = products.find(p => p.id === item.productId);
         return sum + (product ? product.price * item.quantity : 0);
       }, 0);
-      
+
       // Render summary
       summary.innerHTML = cart.map(item => {
         const product = products.find(p => p.id === item.productId);
@@ -871,7 +1039,7 @@
           </div>
         `;
       }).join('');
-      
+
       total.textContent = `Total: R$ ${cartTotal.toFixed(2)}`;
       modal.classList.remove('hidden');
     }
@@ -887,48 +1055,48 @@
       const customerName = document.getElementById('customer-name').value.trim();
       const customerEmail = document.getElementById('customer-email').value.trim();
       const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
-      
+
       if (!customerName || !customerEmail) {
         alert('Por favor, preencha nome e email.');
         return;
       }
-      
+
       if (!mpConfig.accessToken || mpConfig.accessToken.length < 50) {
         alert('⚠️ Access Token do Mercado Pago inválido ou não configurado!\n\nVá em Administração > Configurações do Mercado Pago e cole seu Access Token completo.');
         return;
       }
-      
+
       // Validate Access Token format
       if (!mpConfig.accessToken.startsWith('APP_USR-') && !mpConfig.accessToken.startsWith('TEST-')) {
         alert('⚠️ Access Token inválido!\n\nO token deve começar com "APP_USR-" (produção) ou "TEST-" (teste).');
         return;
       }
-      
+
       // Show processing message
       showToast('🔄 Gerando link de pagamento...');
-      
+
       // Calculate total
       const cartTotal = cart.reduce((sum, item) => {
         const product = products.find(p => p.id === item.productId);
         return sum + (product ? product.price * item.quantity : 0);
       }, 0);
-      
+
       // Validate and prepare items for Mercado Pago
       const items = cart.map(item => {
         const product = products.find(p => p.id === item.productId);
-        
+
         if (!product) {
           throw new Error(`Produto não encontrado: ${item.productId}`);
         }
-        
+
         if (!product.name || product.name.trim() === '') {
           throw new Error(`Nome do produto inválido: ${product.id}`);
         }
-        
+
         if (!product.price || product.price <= 0) {
           throw new Error(`Preço inválido para produto: ${product.name}`);
         }
-        
+
         return {
           id: product.id.toString(),
           title: product.name.substring(0, 256), // MP limit
@@ -939,10 +1107,10 @@
           unit_price: Number(product.price.toFixed(2))
         };
       });
-      
+
       // Create external reference for tracking
       const externalReference = `loja_${Date.now()}`;
-      
+
       // Create preference for Mercado Pago (simplified)
       const preference = {
         items: items,
@@ -960,7 +1128,7 @@
         external_reference: externalReference,
         statement_descriptor: 'LOJA DECASTRO'
       };
-      
+
       // Add PIX-specific configuration if payment method is PIX
       if (paymentMethod === 'pix') {
         preference.payment_methods = {
@@ -972,12 +1140,12 @@
           ]
         };
       }
-      
+
       try {
         // Debug logging
         console.log('Creating preference with data:', preference);
         console.log('Using Access Token:', mpConfig.accessToken.substring(0, 20) + '...');
-        
+
         // Call Mercado Pago API to create preference
         const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
           method: 'POST',
@@ -987,18 +1155,18 @@
           },
           body: JSON.stringify(preference)
         });
-        
+
         console.log('MP API Response Status:', response.status);
         console.log('MP API Response Headers:', Object.fromEntries(response.headers.entries()));
-        
+
         const data = await response.json();
         console.log('MP API Response Data:', data);
-        
+
         if (!response.ok) {
           console.error('MP API Error Details:', data);
-          
+
           let errorMsg = `Erro ${response.status}: `;
-          
+
           if (data.message) {
             errorMsg += data.message;
           } else if (data.cause && data.cause.length > 0) {
@@ -1006,10 +1174,10 @@
           } else {
             errorMsg += 'Erro desconhecido na API';
           }
-          
+
           throw new Error(errorMsg);
         }
-        
+
         if (data.id) {
           // Store pending sale data for later confirmation
           const pendingSale = {
@@ -1027,30 +1195,30 @@
             createdAt: new Date().toISOString(),
             mpPreferenceId: data.id
           };
-          
+
           localStorage.setItem('pendingSale', JSON.stringify(pendingSale));
-          
+
           // Close modal
           closePaymentModal();
-          
+
           // Redirect to Mercado Pago checkout
           showToast('🚀 Redirecionando para pagamento...');
-          
+
           setTimeout(() => {
             window.open(data.init_point, '_blank');
-            
+
             // Show instructions
             alert(`🔥 LINK DE PAGAMENTO GERADO!\n\n✅ Uma nova aba foi aberta com o checkout do Mercado Pago\n💳 Complete o pagamento na nova janela\n🔄 Volte aqui após o pagamento\n\n⏰ O pagamento será processado em tempo real!`);
           }, 1000);
-          
+
         } else {
           throw new Error('Falha ao criar preferência de pagamento');
         }
-        
+
       } catch (error) {
         console.error('Erro ao criar preferência:', error);
         showToast('❌ Erro ao gerar pagamento!');
-        
+
         if (error.message.includes('401')) {
           alert('❌ Erro de autorização!\n\nVerifique se o Access Token está correto nas configurações.');
         } else if (error.message.includes('400')) {
@@ -1058,7 +1226,7 @@
         } else {
           alert('❌ Erro ao conectar com Mercado Pago!\n\nVerifique sua conexão e tente novamente.');
         }
-        
+
         // Show PIX troubleshooting info
         setTimeout(() => {
           if (confirm('💡 PROBLEMA COM PIX INATIVO?\n\n🔴 Se o PIX aparece inativo no checkout:\n\n1. 🏦 Acesse sua conta Mercado Pago\n2. ⚙️ Vá em "Seu negócio" → "Configurações"\n3. 💳 Clique em "Métodos de pagamento"\n4. ✅ ATIVE a opção "PIX"\n5. 💾 Salve as alterações\n\n🔗 Deseja abrir as configurações agora?')) {
@@ -1073,19 +1241,19 @@
       const urlParams = new URLSearchParams(window.location.search);
       const status = urlParams.get('status');
       const reference = urlParams.get('ref');
-      
+
       if (status && reference) {
         const pendingSaleData = localStorage.getItem('pendingSale');
-        
+
         if (pendingSaleData) {
           const pendingSale = JSON.parse(pendingSaleData);
-          
+
           if (pendingSale.externalReference === reference) {
             handlePaymentReturn(status, pendingSale);
-            
+
             // Clean up
             localStorage.removeItem('pendingSale');
-            
+
             // Clean URL
             const cleanUrl = window.location.origin + window.location.pathname;
             window.history.replaceState({}, document.title, cleanUrl);
@@ -1093,7 +1261,7 @@
         }
       }
     }
-    
+
     function handlePaymentReturn(status, pendingSale) {
       switch (status) {
         case 'success':
@@ -1117,38 +1285,38 @@
             mpReference: pendingSale.externalReference,
             mpPreferenceId: pendingSale.mpPreferenceId
           };
-          
+
           sales.push(sale);
           saveToStorage();
-          
+
           // Clear cart if it still has items
           cart = [];
           saveToStorage();
           updateCartCount();
           renderCartItems();
-          
+
           // Show success message
           showToast('🎉 Pagamento aprovado! Venda registrada com sucesso!');
-          
+
           setTimeout(() => {
             alert(`✅ PAGAMENTO APROVADO COM SUCESSO!\n\n💰 Cliente: ${sale.customer}\n💳 Método: ${sale.paymentMethod}\n💵 Total: R$ ${sale.total.toFixed(2)}\n🎯 Venda #${sale.id}\n\n🎉 O dinheiro já está na sua conta Mercado Pago!\n\nObrigado pela preferência!`);
-            
+
             // Switch to sales tab to show the new sale
             switchTab('vendas');
           }, 1000);
-          
+
           break;
-          
+
         case 'pending':
           showToast('⏰ Pagamento pendente - aguardando confirmação');
           alert(`⏰ PAGAMENTO PENDENTE\n\n📄 Seu pagamento está sendo processado\n⏱️ Pode levar alguns minutos para ser confirmado\n📱 Você receberá uma notificação quando for aprovado\n\nObrigado por escolher nossa loja!`);
           break;
-          
+
         case 'failure':
           showToast('❌ Pagamento não aprovado');
           alert(`❌ PAGAMENTO NÃO APROVADO\n\n😔 Seu pagamento não foi processado\n🔄 Você pode tentar novamente\n💳 Verifique seus dados e tente outro método\n\nEstamos aqui para ajudar!`);
           break;
-          
+
         default:
           console.log('Status de pagamento desconhecido:', status);
       }
@@ -1165,13 +1333,13 @@
 
     function showPendingSaleIndicator() {
       const pendingSale = localStorage.getItem('pendingSale');
-      
+
       if (pendingSale) {
         const data = JSON.parse(pendingSale);
         const timeElapsed = Math.floor((Date.now() - new Date(data.createdAt).getTime()) / 1000 / 60);
-        
+
         showToast(`⏰ Venda pendente: R$ ${data.total.toFixed(2)} (${timeElapsed} min atrás)`);
-        
+
         // Add a button to check payment status
         setTimeout(() => {
           if (confirm(`⏰ Você tem uma venda pendente de R$ ${data.total.toFixed(2)}\n\nDeseja verificar o status do pagamento?`)) {
@@ -1184,7 +1352,7 @@
     // Sales Management Functions
     function createSale(customerName = 'Cliente Anônimo', customerEmail = '', paymentMethod = 'pix') {
       if (cart.length === 0) return null;
-      
+
       const saleItems = cart.map(item => {
         const product = products.find(p => p.id === item.productId);
         return {
@@ -1196,7 +1364,7 @@
           subtotal: product.price * item.quantity
         };
       });
-      
+
       const sale = {
         id: Date.now(),
         date: new Date().toISOString(),
@@ -1207,7 +1375,7 @@
         total: saleItems.reduce((sum, item) => sum + item.subtotal, 0),
         status: 'Concluída'
       };
-      
+
       sales.push(sale);
       saveToStorage();
       return sale;
@@ -1235,17 +1403,17 @@
       sortedSales.forEach(sale => {
         const date = new Date(sale.date);
         const formattedDate = date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        
-        const itemsText = sale.items.map(item => 
+
+        const itemsText = sale.items.map(item =>
           `${item.productName} (${item.quantity}x)`
         ).join(', ');
-        
+
         const paymentIcon = {
           'PIX': '🚀',
           'Cartão de Crédito': '💳',
           'Boleto Bancário': '📄'
         };
-        
+
         const row = document.createElement('tr');
         row.innerHTML = `
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -1288,7 +1456,7 @@
       document.getElementById('today-sales').textContent = todaySales.length;
 
       // Total products sold
-      const totalProductsSold = sales.reduce((sum, sale) => 
+      const totalProductsSold = sales.reduce((sum, sale) =>
         sum + sale.items.reduce((itemSum, item) => itemSum + item.quantity, 0), 0
       );
       document.getElementById('total-products-sold').textContent = totalProductsSold;
@@ -1304,12 +1472,12 @@
         });
       });
 
-      const bestSeller = Object.keys(productSales).length > 0 
+      const bestSeller = Object.keys(productSales).length > 0
         ? Object.keys(productSales).reduce((a, b) => productSales[a] > productSales[b] ? a : b)
         : '-';
-      
-      document.getElementById('best-seller').textContent = bestSeller.length > 20 
-        ? bestSeller.substring(0, 20) + '...' 
+
+      document.getElementById('best-seller').textContent = bestSeller.length > 20
+        ? bestSeller.substring(0, 20) + '...'
         : bestSeller;
     }
 
@@ -1318,12 +1486,12 @@
       const modal = document.getElementById('product-form-modal');
       const title = document.getElementById('modal-title');
       const saveBtn = document.getElementById('save-btn');
-      
+
       // Populate categories first
       populateCategories();
-      
+
       modal.classList.remove('hidden');
-      
+
       if (productId) {
         const product = products.find(p => p.id === productId);
         editingProduct = product;
@@ -1371,9 +1539,9 @@
         alert('Por favor, preencha todos os campos obrigatórios (Nome, Preço e Categoria)');
         return;
       }
-      
+
       let imageData = null;
-      
+
       // Handle image upload
       if (imageFile) {
         try {
@@ -1441,48 +1609,48 @@
 
     function saveCategory() {
       const categoryName = document.getElementById('category-name').value.trim();
-      
+
       if (!categoryName) {
         alert('Por favor, digite o nome da categoria.');
         return;
       }
-      
+
       // Check if category already exists (case insensitive)
-      const existingCategory = categories.find(cat => 
+      const existingCategory = categories.find(cat =>
         cat.toLowerCase() === categoryName.toLowerCase()
       );
-      
+
       if (existingCategory) {
         alert('Esta categoria já existe!');
         return;
       }
-      
+
       // Add new category
       categories.push(categoryName);
       categories.sort(); // Keep alphabetical order
-      
+
       // Save to localStorage
       localStorage.setItem('categories', JSON.stringify(categories));
-      
+
       // Update category select
       populateCategories();
-      
+
       // Select the new category
       document.getElementById('product-category').value = categoryName;
-      
+
       // Close modal
       closeCategoryModal();
-      
+
       showToast(`✅ Categoria "${categoryName}" criada com sucesso!`);
     }
 
     function populateCategories() {
       const select = document.getElementById('product-category');
       const currentValue = select.value;
-      
+
       // Clear existing options except the first one
       select.innerHTML = '<option value="">Selecione uma categoria</option>';
-      
+
       // Add all categories
       categories.forEach(category => {
         const option = document.createElement('option');
@@ -1490,7 +1658,7 @@
         option.textContent = category;
         select.appendChild(option);
       });
-      
+
       // Restore selection if it was set
       if (currentValue) {
         select.value = currentValue;
@@ -1502,24 +1670,24 @@
       document.getElementById('product-image').value = '';
       document.getElementById('image-preview').classList.add('hidden');
     }
-    
+
     function handleImageUpload(file) {
       return new Promise((resolve, reject) => {
         if (!file) {
           resolve(null);
           return;
         }
-        
+
         const reader = new FileReader();
         reader.onload = function(e) {
           const imageData = e.target.result;
-          
+
           // Show preview
           const preview = document.getElementById('image-preview');
           const previewImg = document.getElementById('preview-img');
           previewImg.src = imageData;
           preview.classList.remove('hidden');
-          
+
           resolve(imageData);
         };
         reader.onerror = reject;
@@ -1546,10 +1714,32 @@
       const toast = document.getElementById('toast');
       toast.textContent = message;
       toast.classList.remove('hidden');
-      
+
       setTimeout(() => {
         toast.classList.add('hidden');
       }, 3000);
+    }
+
+    // Contact form handler
+    function sendMessage(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('contact-name').value;
+      const email = document.getElementById('contact-email').value;
+      const subject = document.getElementById('contact-subject').value;
+      const message = document.getElementById('contact-message').value;
+      
+      // In a real application, you would send this to a backend
+      // For now, we'll just show a success message
+      alert(`✅ Mensagem enviada com sucesso!\n\nOlá ${name}, recebemos sua mensagem sobre "${document.getElementById('contact-subject').selectedOptions[0].text}" e responderemos em até 24 horas no email ${email}.\n\nObrigado pelo contato!`);
+      
+      // Clear form
+      document.getElementById('contact-name').value = '';
+      document.getElementById('contact-email').value = '';
+      document.getElementById('contact-subject').value = '';
+      document.getElementById('contact-message').value = '';
+      
+      showToast('Mensagem enviada! Responderemos em breve.');
     }
 
     // Initialize App
@@ -1561,16 +1751,16 @@
       updateCartCount();
       updateProductsCount();
       updateSalesCount();
-      
+
       // Initialize Mercado Pago if configured
       initializeMercadoPago();
-      
+
       // Check for payment status in URL
       checkPaymentStatus();
-      
+
       // Show pending sale indicator if exists
       showPendingSaleIndicator();
-      
+
       // Add image upload event listener
       const imageInput = document.getElementById('product-image');
       if (imageInput) {
@@ -1583,20 +1773,20 @@
               this.value = '';
               return;
             }
-            
+
             // Validate file type
             if (!file.type.startsWith('image/')) {
               alert('⚠️ Selecione apenas imagens!');
               this.value = '';
               return;
             }
-            
+
             // Show preview
             handleImageUpload(file);
           }
         });
       }
-      
+
       // Add Enter key handler for category creation
       const categoryNameInput = document.getElementById('category-name');
       if (categoryNameInput) {
@@ -1606,7 +1796,7 @@
           }
         });
       }
-      
+
       // Initialize Lucide icons
       if (typeof lucide !== 'undefined') {
         lucide.createIcons();
