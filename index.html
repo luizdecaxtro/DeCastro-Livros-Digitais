@@ -922,7 +922,10 @@
         
         <div class="bg-green-50 p-4 rounded-lg border border-green-200 mb-6">
           <div id="qr-code-container" class="w-48 h-48 mx-auto mb-4 border-2 border-green-300 rounded-lg flex items-center justify-center bg-white">
-            <canvas id="qrcode-canvas" class="max-w-full max-h-full"></canvas>
+            <div class="text-center text-blue-600 p-2">
+              <div class="text-4xl mb-2">⏳</div>
+              <p class="text-sm font-bold">Gerando QR Code...</p>
+            </div>
           </div>
           
           <div class="bg-white p-3 rounded border">
@@ -949,8 +952,23 @@
       </div>
     `;
 
-    // Generate QR Code
-    waitForQRCode(() => generatePixQR(total));
+    // Generate QR Code immediately using external API
+    setTimeout(() => {
+      const pixPayload = createPixPayload(total);
+      const container = document.getElementById('qr-code-container');
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=190x190&data=${encodeURIComponent(pixPayload)}&format=png&margin=10`;
+      
+      container.innerHTML = `
+        <img src="${qrUrl}" alt="QR Code PIX" class="w-full h-full object-contain rounded" 
+             onload="console.log('✅ QR Code PIX gerado com sucesso!')" 
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div style="display: none;" class="text-center text-green-600 p-4">
+          <div class="text-6xl mb-2">📱</div>
+          <p class="text-lg font-bold">QR Code PIX</p>
+          <p class="text-sm mt-1">Use a chave manual abaixo</p>
+        </div>
+      `;
+    }, 200);
   }
 
   function showCardPayment(name, email, total) {
@@ -988,50 +1006,170 @@
       return;
     }
     
+    // Load saved cards or show empty state
+    const savedCards = JSON.parse(localStorage.getItem('decastro-saved-cards') || '[]');
+    
     modalContent.innerHTML = `
-      <div class="max-w-md mx-auto">
-        <h3 class="text-xl font-bold text-blue-600 mb-4 text-center">💳 Pagamento com Cartão</h3>
+      <div class="max-w-lg mx-auto">
+        <h3 class="text-xl font-bold text-blue-600 mb-4 text-center flex items-center justify-center gap-2">
+          <i data-lucide="credit-card" class="w-5 h-5"></i>
+          Cartões Cadastrados
+        </h3>
         <p class="text-center text-gray-600 mb-6">Total: <span class="font-bold text-green-600">R$ ${total.toFixed(2)}</span></p>
         
         <div class="bg-blue-50 p-3 rounded-lg mb-4">
           <div class="flex items-center gap-2 text-blue-600">
             <div class="text-lg">🔒</div>
             <div class="text-sm">
-              <p class="font-bold">Pagamento Seguro</p>
-              <p>Processado via Mercado Pago</p>
+              <p class="font-bold">Pagamento Seguro - Mercado Pago</p>
+              <p>Seus cartões ficam salvos com segurança</p>
             </div>
           </div>
         </div>
         
-        <form id="mp-card-form" class="space-y-4">
+        <!-- Saved Cards List -->
+        <div id="saved-cards-list" class="space-y-3 mb-4">
+          ${savedCards.length > 0 ? 
+            savedCards.map(card => `
+              <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-blue-300 cursor-pointer card-option" 
+                   onclick="selectCard('${card.id}')" data-card-id="${card.id}">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="text-2xl">${getCardIcon(card.brand)}</div>
+                    <div>
+                      <p class="font-bold text-gray-800">**** **** **** ${card.lastFour}</p>
+                      <p class="text-sm text-gray-600">${card.brand.toUpperCase()} • ${card.holderName}</p>
+                    </div>
+                  </div>
+                  <input type="radio" name="selected-card" value="${card.id}" class="w-4 h-4">
+                </div>
+              </div>
+            `).join('') 
+            : `
+              <div class="text-center py-8 text-gray-500">
+                <div class="text-6xl mb-4">💳</div>
+                <p class="text-lg font-medium">Nenhum cartão cadastrado</p>
+                <p class="text-sm">Cadastre seu primeiro cartão abaixo</p>
+              </div>
+            `
+          }
+        </div>
+        
+        <!-- Installments (hidden initially) -->
+        <div id="installments-section" class="hidden mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Parcelamento</label>
+          <select id="mp-installments" class="w-full p-3 border border-gray-300 rounded-lg">
+            <option value="1">1x de R$ ${total.toFixed(2)} (sem juros)</option>
+            <option value="2">2x de R$ ${(total/2).toFixed(2)} (sem juros)</option>
+            <option value="3">3x de R$ ${(total/3).toFixed(2)} (sem juros)</option>
+            <option value="6">6x de R$ ${(total/6).toFixed(2)} (sem juros)</option>
+            <option value="12">12x de R$ ${(total/12).toFixed(2)} (com juros)</option>
+          </select>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex gap-2">
+          <button onclick="closePaymentModal()" class="flex-1 bg-gray-500 text-white py-3 rounded-lg">
+            Cancelar
+          </button>
+          <button id="add-card-btn" onclick="showAddCardForm('${name}', '${email}', ${total})" 
+                  class="flex-1 bg-green-600 text-white py-3 rounded-lg">
+            ➕ Cadastrar Cartão
+          </button>
+          <button id="pay-card-btn" onclick="payWithSelectedCard('${name}', '${email}', ${total})" 
+                  class="flex-1 bg-blue-600 text-white py-3 rounded-lg hidden">
+            💳 Pagar
+          </button>
+        </div>
+      </div>
+    `;
+    
+    // Initialize Lucide icons
+    setTimeout(() => {
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    }, 100);
+  }
+  
+  // Card management functions
+  function getCardIcon(brand) {
+    const icons = {
+      'visa': '💳',
+      'mastercard': '💳', 
+      'amex': '💳',
+      'elo': '💳',
+      'default': '💳'
+    };
+    return icons[brand?.toLowerCase()] || icons.default;
+  }
+  
+  function selectCard(cardId) {
+    // Remove previous selections
+    document.querySelectorAll('.card-option').forEach(card => {
+      card.classList.remove('border-blue-500', 'bg-blue-50');
+    });
+    
+    // Add selection to clicked card
+    const selectedCard = document.querySelector(`[data-card-id="${cardId}"]`);
+    if (selectedCard) {
+      selectedCard.classList.add('border-blue-500', 'bg-blue-50');
+      selectedCard.querySelector('input[type="radio"]').checked = true;
+      
+      // Show installments and pay button
+      document.getElementById('installments-section').classList.remove('hidden');
+      document.getElementById('add-card-btn').classList.add('hidden');
+      document.getElementById('pay-card-btn').classList.remove('hidden');
+    }
+  }
+  
+  function showAddCardForm(name, email, total) {
+    const modal = document.getElementById('payment-modal');
+    const modalContent = modal.querySelector('.bg-white');
+    
+    modalContent.innerHTML = `
+      <div class="max-w-md mx-auto">
+        <h3 class="text-xl font-bold text-green-600 mb-4 text-center">➕ Cadastrar Novo Cartão</h3>
+        <p class="text-center text-gray-600 mb-6">Total: <span class="font-bold text-green-600">R$ ${total.toFixed(2)}</span></p>
+        
+        <form id="new-card-form" class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Número do Cartão</label>
-            <input type="text" id="mp-card-number" placeholder="0000 0000 0000 0000" maxlength="19" 
+            <label class="block text-sm font-medium text-gray-700 mb-1">Número do Cartão *</label>
+            <input type="text" id="new-card-number" placeholder="0000 0000 0000 0000" maxlength="19" 
                    class="w-full p-3 border border-gray-300 rounded-lg" required>
           </div>
           
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Validade (MM/AA)</label>
-              <input type="text" id="mp-expiry-date" placeholder="12/28" maxlength="5" 
+              <label class="block text-sm font-medium text-gray-700 mb-1">Validade (MM/AA) *</label>
+              <input type="text" id="new-expiry-date" placeholder="12/28" maxlength="5" 
                      class="w-full p-3 border border-gray-300 rounded-lg" required>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">CVV</label>
-              <input type="text" id="mp-security-code" placeholder="123" maxlength="4" 
+              <label class="block text-sm font-medium text-gray-700 mb-1">CVV *</label>
+              <input type="text" id="new-security-code" placeholder="123" maxlength="4" 
                      class="w-full p-3 border border-gray-300 rounded-lg" required>
             </div>
           </div>
           
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Nome no Cartão</label>
-            <input type="text" id="mp-card-holder-name" placeholder="NOME COMPLETO" value="${name}" 
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nome no Cartão *</label>
+            <input type="text" id="new-card-holder-name" placeholder="NOME COMPLETO" value="${name}" 
                    class="w-full p-3 border border-gray-300 rounded-lg" required>
           </div>
           
+          <div class="bg-green-50 p-3 rounded-lg border border-green-200">
+            <div class="flex items-center gap-2">
+              <input type="checkbox" id="save-card" class="w-4 h-4" checked>
+              <label for="save-card" class="text-sm text-green-700">
+                <strong>✅ Salvar cartão</strong> para futuras compras (seguro)
+              </label>
+            </div>
+          </div>
+          
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Parcelamento</label>
-            <select id="mp-installments" class="w-full p-3 border border-gray-300 rounded-lg">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Parcelamento</label>
+            <select id="new-installments" class="w-full p-3 border border-gray-300 rounded-lg">
               <option value="1">1x de R$ ${total.toFixed(2)} (sem juros)</option>
               <option value="2">2x de R$ ${(total/2).toFixed(2)} (sem juros)</option>
               <option value="3">3x de R$ ${(total/3).toFixed(2)} (sem juros)</option>
@@ -1042,15 +1180,116 @@
         </form>
         
         <div class="flex gap-2 mt-6">
-          <button onclick="closePaymentModal()" class="flex-1 bg-gray-500 text-white py-3 rounded-lg">
-            Cancelar
+          <button onclick="showCardPayment('${name}', '${email}', ${total})" class="flex-1 bg-gray-500 text-white py-3 rounded-lg">
+            ← Voltar
           </button>
-          <button onclick="processMPCardPayment('${name}', '${email}', ${total})" class="flex-1 bg-blue-600 text-white py-3 rounded-lg">
-            💳 Pagar Agora
+          <button onclick="processNewCardPayment('${name}', '${email}', ${total})" class="flex-1 bg-green-600 text-white py-3 rounded-lg">
+            💳 Cadastrar e Pagar
           </button>
         </div>
       </div>
     `;
+  }
+  
+  function payWithSelectedCard(name, email, total) {
+    const selectedCard = document.querySelector('input[name="selected-card"]:checked');
+    if (!selectedCard) {
+      alert('⚠️ Selecione um cartão para continuar.');
+      return;
+    }
+    
+    const installments = document.getElementById('mp-installments')?.value || '1';
+    const savedCards = JSON.parse(localStorage.getItem('decastro-saved-cards') || '[]');
+    const card = savedCards.find(c => c.id === selectedCard.value);
+    
+    if (card) {
+      // Simulate payment processing
+      showPaymentProcessing(name, email, total, card, installments);
+    }
+  }
+  
+  function processNewCardPayment(name, email, total) {
+    const cardNumber = document.getElementById('new-card-number')?.value?.replace(/\s/g, '');
+    const expiryDate = document.getElementById('new-expiry-date')?.value;
+    const securityCode = document.getElementById('new-security-code')?.value;
+    const cardHolderName = document.getElementById('new-card-holder-name')?.value;
+    const saveCard = document.getElementById('save-card')?.checked;
+    const installments = document.getElementById('new-installments')?.value || '1';
+    
+    // Basic validation
+    if (!cardNumber || !expiryDate || !securityCode || !cardHolderName) {
+      alert('⚠️ Preencha todos os campos obrigatórios.');
+      return;
+    }
+    
+    if (cardNumber.length < 13) {
+      alert('⚠️ Número do cartão inválido.');
+      return;
+    }
+    
+    // Create card object
+    const newCard = {
+      id: 'card_' + Date.now(),
+      lastFour: cardNumber.slice(-4),
+      brand: detectCardBrand(cardNumber),
+      holderName: cardHolderName,
+      expiryDate: expiryDate,
+      createdAt: new Date().toISOString()
+    };
+    
+    // Save card if requested
+    if (saveCard) {
+      const savedCards = JSON.parse(localStorage.getItem('decastro-saved-cards') || '[]');
+      savedCards.push(newCard);
+      localStorage.setItem('decastro-saved-cards', JSON.stringify(savedCards));
+    }
+    
+    // Process payment
+    showPaymentProcessing(name, email, total, newCard, installments);
+  }
+  
+  function detectCardBrand(cardNumber) {
+    const firstDigit = cardNumber.charAt(0);
+    const firstTwoDigits = cardNumber.substring(0, 2);
+    
+    if (firstDigit === '4') return 'visa';
+    if (['51', '52', '53', '54', '55'].includes(firstTwoDigits)) return 'mastercard';
+    if (['34', '37'].includes(firstTwoDigits)) return 'amex';
+    if (['50', '63', '67'].includes(firstTwoDigits)) return 'elo';
+    return 'visa'; // default
+  }
+  
+  function showPaymentProcessing(name, email, total, card, installments) {
+    const modal = document.getElementById('payment-modal');
+    const modalContent = modal.querySelector('.bg-white');
+    
+    modalContent.innerHTML = `
+      <div class="text-center">
+        <h3 class="text-xl font-bold text-blue-600 mb-4">💳 Processando Pagamento...</h3>
+        
+        <div class="bg-blue-50 p-6 rounded-lg border border-blue-200 mb-6">
+          <div class="w-16 h-16 mx-auto mb-4 border-4 border-blue-300 border-t-blue-600 rounded-full animate-spin"></div>
+          <p class="text-blue-700 font-medium mb-2">Validando cartão...</p>
+          <p class="text-sm text-blue-600">Processado com segurança via Mercado Pago</p>
+        </div>
+        
+        <div class="text-left bg-gray-50 p-4 rounded-lg space-y-1">
+          <h4 class="font-bold mb-2 text-center">Detalhes do Pagamento:</h4>
+          <p class="text-sm text-gray-700">💳 Cartão: ${getCardIcon(card.brand)} **** ${card.lastFour}</p>
+          <p class="text-sm text-gray-700">💵 Valor: R$ ${total.toFixed(2)}</p>
+          <p class="text-sm text-gray-700">📅 Parcelamento: ${installments}x</p>
+          <p class="text-sm text-gray-700">👤 Portador: ${card.holderName}</p>
+        </div>
+      </div>
+    `;
+    
+    // Simulate processing time (2-4 seconds)
+    const processingTime = 2000 + Math.random() * 2000;
+    setTimeout(() => {
+      const installmentsText = installments === '1' ? 'à vista' : `${installments}x`;
+      const methodText = `Cartão ${card.brand.toUpperCase()} *${card.lastFour} (${installmentsText})`;
+      simulateCardPayment(name, email, total, installments, methodText);
+    }, processingTime);
   }
 
   function processMPCardPayment(name, email, total) {
@@ -1095,93 +1334,7 @@
     }, 3000);
   }
 
-  // PIX functions
-  function waitForQRCode(callback, maxAttempts = 10) {
-    let attempts = 0;
-    const checkQRCode = () => {
-      attempts++;
-      if (typeof QRCode !== 'undefined') {
-        callback();
-      } else if (attempts < maxAttempts) {
-        setTimeout(checkQRCode, 200);
-      } else {
-        console.error('QRCode library failed to load after', maxAttempts, 'attempts');
-        // Fallback UI
-        const container = document.getElementById('qr-code-container');
-        if (container) {
-          container.innerHTML = `
-            <div class="text-center text-blue-600 p-4">
-              <div class="text-6xl mb-3">📱</div>
-              <p class="text-lg font-bold text-green-600">QR Code PIX</p>
-              <p class="text-sm mt-2 text-gray-600">Use a chave PIX manual abaixo</p>
-            </div>
-          `;
-        }
-      }
-    };
-    checkQRCode();
-  }
-
-  function generatePixQR(amount) {
-    const pixData = createPixPayload(amount);
-    const canvas = document.getElementById('qrcode-canvas');
-    const container = document.getElementById('qr-code-container');
-    
-    if (!canvas || !container) {
-      console.error('Canvas or container not found');
-      return;
-    }
-    
-    // Try multiple approaches to generate QR Code
-    
-    // Method 1: Use QRCode library if available
-    if (typeof QRCode !== 'undefined' && QRCode.toCanvas) {
-      try {
-        QRCode.toCanvas(canvas, pixData, {
-          width: 180,
-          margin: 1,
-          color: {
-            dark: '#000000',
-            light: '#ffffff'
-          }
-        }, function (error) {
-          if (error) {
-            console.error('QR Code generation error:', error);
-            tryAlternativeQR(pixData, container);
-          } else {
-            console.log('QR Code generated successfully with QRCode library');
-          }
-        });
-        return;
-      } catch (e) {
-        console.error('QRCode library error:', e);
-      }
-    }
-    
-    // Method 2: Use alternative service
-    tryAlternativeQR(pixData, container);
-  }
-  
-  function tryAlternativeQR(pixData, container) {
-    console.log('Trying alternative QR Code generation');
-    
-    // Use Google Charts API or QR Server API
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(pixData)}&format=png`;
-    
-    container.innerHTML = `
-      <div class="text-center">
-        <img src="${qrUrl}" alt="QR Code PIX" class="mx-auto border rounded" 
-             style="max-width: 180px; max-height: 180px;" 
-             onload="console.log('QR Code image loaded successfully')" 
-             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-        <div style="display: none;" class="text-center text-blue-600 p-4">
-          <div class="text-6xl mb-3">📱</div>
-          <p class="text-lg font-bold text-green-600">QR Code PIX</p>
-          <p class="text-sm mt-2 text-gray-600">Use a chave PIX manual abaixo</p>
-        </div>
-      </div>
-    `;
-  }
+  // PIX functions - Simplified and working
 
   function createPixPayload(amount) {
     // PIX payload básico funcional
@@ -1254,9 +1407,8 @@
     }
   }
 
-  function simulateCardPayment(name, email, total, installments = '1') {
-    const installmentsText = installments === '1' ? 'à vista' : `${installments}x`;
-    const methodText = `Cartão de Crédito (${installmentsText})`;
+  function simulateCardPayment(name, email, total, installments = '1', customMethod = null) {
+    const methodText = customMethod || `Cartão de Crédito (${installments === '1' ? 'à vista' : installments + 'x'})`;
     
     if (confirm('🧪 SIMULAÇÃO: Confirmar processamento do cartão?')) {
       completePurchase(name, email, total, methodText);
