@@ -710,8 +710,14 @@
         return;
       }
       
-      if (!mpConfig.accessToken) {
-        alert('⚠️ Access Token do Mercado Pago não configurado!');
+      if (!mpConfig.accessToken || mpConfig.accessToken.length < 50) {
+        alert('⚠️ Access Token do Mercado Pago inválido ou não configurado!\n\nVá em Administração > Configurações do Mercado Pago e cole seu Access Token completo.');
+        return;
+      }
+      
+      // Validate Access Token format
+      if (!mpConfig.accessToken.startsWith('APP_USR-') && !mpConfig.accessToken.startsWith('TEST-')) {
+        alert('⚠️ Access Token inválido!\n\nO token deve começar com "APP_USR-" (produção) ou "TEST-" (teste).');
         return;
       }
       
@@ -752,7 +758,21 @@
         payment_methods: {
           excluded_payment_types: [],
           excluded_payment_methods: [],
-          default_payment_method_id: null,
+          included_payment_methods: [
+            {
+              "id": "pix"
+            },
+            {
+              "id": "credit_card"
+            },
+            {
+              "id": "debit_card"
+            },
+            {
+              "id": "ticket"
+            }
+          ],
+          default_payment_method_id: "pix",
           installments: 12,
           default_installments: 1
         },
@@ -764,7 +784,9 @@
         auto_return: 'approved',
         external_reference: externalReference,
         statement_descriptor: 'LOJA DECASTRO',
-        expires: false
+        expires: false,
+        binary_mode: false,
+        purpose: 'onboarding_credits'
       };
       
       try {
