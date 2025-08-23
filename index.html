@@ -675,10 +675,10 @@
         <h3 class="text-xl font-bold text-green-600 mb-4">🚀 PIX - Pagamento Instantâneo</h3>
         
         <div class="bg-green-50 p-4 rounded-lg border border-green-200 mb-6">
-          <div class="qr-placeholder w-48 h-48 mx-auto mb-4 border-2 border-green-300 rounded-lg flex items-center justify-center bg-white">
+          <div id="qr-code-container" class="w-48 h-48 mx-auto mb-4 border-2 border-green-300 rounded-lg flex items-center justify-center bg-white">
             <div class="text-center text-green-600">
               <div class="text-4xl mb-2">📱</div>
-              <p class="text-sm font-bold">QR CODE PIX</p>
+              <p class="text-sm font-bold">Gerando QR Code...</p>
               <p class="text-xs">R$ ${total.toFixed(2)}</p>
             </div>
           </div>
@@ -717,6 +717,9 @@
         </div>
       </div>
     `;
+    
+    // Gerar QR Code real
+    setTimeout(() => generatePixQRCode(total), 500);
   }
 
   function copyPixKey() {
@@ -983,6 +986,87 @@
     `;
   }
 
+  // Generate PIX QR Code
+  function generatePixQRCode(amount) {
+    // Carregar biblioteca QR Code
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+    script.onload = function() {
+      createPixQR(amount);
+    };
+    script.onerror = function() {
+      // Fallback para API externa
+      createQRWithAPI(amount);
+    };
+    document.head.appendChild(script);
+  }
+  
+  function createPixQR(amount) {
+    const pixData = `00020101021126580014BR.GOV.BCB.PIX013698988804678520400005303986540${amount.toFixed(2).length.toString().padStart(2, '0')}${amount.toFixed(2)}5802BR5913Loja DeCastro6008SAO LUIS62070503***63041D3D`;
+    
+    const canvas = document.createElement('canvas');
+    QRCode.toCanvas(canvas, pixData, {
+      width: 192,
+      height: 192,
+      margin: 1,
+      color: {
+        dark: '#065f46',
+        light: '#ffffff'
+      }
+    }, function(error) {
+      const container = document.getElementById('qr-code-container');
+      if (error) {
+        console.error('Erro QR Code:', error);
+        createQRWithAPI(amount);
+      } else {
+        if (container) {
+          container.innerHTML = '';
+          container.appendChild(canvas);
+          
+          const text = document.createElement('p');
+          text.className = 'text-xs text-green-600 mt-2 font-bold';
+          text.textContent = '📱 Escaneie para pagar';
+          container.appendChild(text);
+        }
+      }
+    });
+  }
+  
+  function createQRWithAPI(amount) {
+    const container = document.getElementById('qr-code-container');
+    if (!container) return;
+    
+    // Usar API pública para gerar QR Code
+    const pixData = `PIX: +5598988804678 | Valor: R$ ${amount.toFixed(2)} | Loja DeCastro`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=192x192&data=${encodeURIComponent(pixData)}`;
+    
+    const img = document.createElement('img');
+    img.src = qrUrl;
+    img.className = 'w-48 h-48 border border-green-300 rounded';
+    img.onload = function() {
+      container.innerHTML = '';
+      container.appendChild(img);
+      
+      const text = document.createElement('p');
+      text.className = 'text-xs text-green-600 mt-2 font-bold';
+      text.textContent = '📱 QR Code Gerado';
+      container.appendChild(text);
+    };
+    
+    img.onerror = function() {
+      container.innerHTML = `
+        <div class="text-center p-4">
+          <div class="w-48 h-48 bg-green-100 border-2 border-dashed border-green-400 rounded-lg flex flex-col items-center justify-center mb-2">
+            <div class="text-6xl mb-2">📱</div>
+            <p class="text-green-700 font-bold">QR CODE PIX</p>
+            <p class="text-green-600">R$ ${amount.toFixed(2)}</p>
+            <p class="text-xs text-green-500 mt-1">Use a chave PIX abaixo</p>
+          </div>
+        </div>
+      `;
+    };
+  }
+
   // Make functions global
   window.switchTab = switchTab;
   window.openProductForm = openProductForm;
@@ -999,6 +1083,7 @@
   window.formatExpiry = formatExpiry;
   window.simulateCardPayment = simulateCardPayment;
   window.deleteProduct = deleteProduct;
+  window.generatePixQRCode = generatePixQRCode;
 
 </script>
 
