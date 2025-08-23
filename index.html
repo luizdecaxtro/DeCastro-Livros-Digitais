@@ -354,7 +354,15 @@
       
       <div class="mb-6">
         <label class="block text-sm font-medium mb-1">Access Token *</label>
-        <input id="mp-access-token" type="password" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs" placeholder="TEST-xxx ou APP_USR-xxx">
+        <div class="relative">
+          <input id="mp-access-token" type="password" class="w-full border rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs" placeholder="TEST-xxx ou APP_USR-xxx">
+          <button type="button" onclick="toggleTokenVisibility()" class="absolute right-2 top-2 text-gray-500 hover:text-gray-700" title="Mostrar/Ocultar">
+            <span id="toggle-icon">👁️</span>
+          </button>
+        </div>
+        <p class="text-xs text-gray-600 mt-1">
+          ⚠️ Se aparecer pontos (...........), cole o token completo novamente
+        </p>
       </div>
       
       <div class="flex gap-2">
@@ -657,6 +665,19 @@
 
     function closeConfigModal() {
       document.getElementById('config-modal').classList.add('hidden');
+    }
+    
+    function toggleTokenVisibility() {
+      const tokenInput = document.getElementById('mp-access-token');
+      const toggleIcon = document.getElementById('toggle-icon');
+      
+      if (tokenInput.type === 'password') {
+        tokenInput.type = 'text';
+        toggleIcon.textContent = '🙈'; // see no evil monkey
+      } else {
+        tokenInput.type = 'password';
+        toggleIcon.textContent = '👁️'; // eye
+      }
     }
 
     async function testCredentials() {
