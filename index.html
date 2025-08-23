@@ -437,33 +437,22 @@
       </div>
 
       <div class="mb-6">
-        <label class="block text-sm font-medium mb-2">Método de Pagamento:</label>
-        <div class="space-y-2">
-          <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-            <input type="radio" name="payment-method" value="pix" class="mr-3" checked>
-            <span class="text-2xl mr-3">🚀</span>
+        <label class="block text-sm font-medium mb-2">Opções de Pagamento:</label>
+        <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+          <label class="flex items-center cursor-pointer">
+            <input type="radio" name="payment-method" value="all" class="mr-3" checked>
+            <span class="text-2xl mr-3">🎆</span>
             <div>
-              <div class="font-medium">PIX</div>
-              <div class="text-sm text-green-600">Instantâneo • Sem taxa</div>
-              <div class="text-xs text-blue-600">*Deve estar ativado na sua conta MP</div>
-            </div>
-          </label>
-
-          <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-            <input type="radio" name="payment-method" value="credit_card" class="mr-3">
-            <span class="text-2xl mr-3">💳</span>
-            <div>
-              <div class="font-medium">Cartão de Crédito</div>
-              <div class="text-sm text-gray-600">Até 12x sem juros</div>
-            </div>
-          </label>
-
-          <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer">
-            <input type="radio" name="payment-method" value="boleto" class="mr-3">
-            <span class="text-2xl mr-3">📄</span>
-            <div>
-              <div class="font-medium">Boleto Bancário</div>
-              <div class="text-sm text-gray-600">Vencimento em 3 dias</div>
+              <div class="font-medium text-green-800">Mostrar TODAS as opções de pagamento</div>
+              <div class="text-sm text-green-600 mt-1">
+                ✅ PIX (instantâneo)<br>
+                ✅ Cartão de Crédito (1x a 12x)<br>
+                ✅ Boleto Bancário<br>
+                ✅ Outras opções disponíveis
+              </div>
+              <div class="text-xs text-blue-600 mt-2">
+                💡 <strong>Você escolherá a forma de pagamento na próxima tela do Mercado Pago</strong>
+              </div>
             </div>
           </label>
         </div>
@@ -499,10 +488,19 @@
           <li><strong>6.</strong> Cole aqui sem espaços extras</li>
         </ol>
 
-        <div class="mt-3 p-3 bg-yellow-100 rounded">
-          <p class="text-xs text-yellow-800">
-            ⚠️ <strong>ATENÇÃO:</strong> Use credenciais de <strong>PRODUÇÃO</strong> para vendas reais e <strong>TESTE</strong> apenas para testes.
-            Tokens de teste começam com "TEST-" e de produção com "APP_USR-".
+        <div class="mt-3 p-3 bg-red-100 rounded">
+          <p class="text-xs text-red-800 font-bold">
+            🚨 <strong>PROBLEMA IDENTIFICADO:</strong> PIX desabilitado = credenciais de TESTE sendo usadas!<br><br>
+            ✅ <strong>SOLUÇÃO:</strong> Use credenciais de <strong>PRODUÇÃO</strong> (APP_USR-...) para ter:<br>
+            • PIX ativo ✅<br>
+            • Cartões de crédito ✅<br> 
+            • Boleto bancário ✅<br>
+            • Até 12x no cartão ✅
+          </p>
+        </div>
+        <div class="mt-2 p-3 bg-green-100 rounded">
+          <p class="text-xs text-green-800">
+            💡 <strong>DICA:</strong> Mesmo em PRODUÇÃO, você pode testar com R$ 0,01 sem cobrar clientes reais.
           </p>
         </div>
       </div>
@@ -1054,7 +1052,7 @@
     async function processPayment() {
       const customerName = document.getElementById('customer-name').value.trim();
       const customerEmail = document.getElementById('customer-email').value.trim();
-      const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+      const paymentMethod = 'all'; // Always show all payment options
 
       if (!customerName || !customerEmail) {
         alert('Por favor, preencha nome e email.');
@@ -1129,17 +1127,22 @@
         statement_descriptor: 'LOJA DECASTRO'
       };
 
-      // Add PIX-specific configuration if payment method is PIX
-      if (paymentMethod === 'pix') {
-        preference.payment_methods = {
-          excluded_payment_types: [
-            {"id": "credit_card"},
-            {"id": "debit_card"},
-            {"id": "ticket"},
-            {"id": "atm"}
-          ]
-        };
-      }
+      // Configure payment methods to ENABLE ALL OPTIONS
+      preference.payment_methods = {
+        excluded_payment_methods: [],     // Don't exclude any specific methods
+        excluded_payment_types: [],       // Don't exclude any payment types
+        installments: 12,                 // Allow up to 12 installments for credit cards
+        default_installments: 1           // Default to 1 installment
+      };
+      
+      // Additional settings to ensure all payment methods work
+      preference.binary_mode = false;     // Allow pending payments (boleto, etc)
+      preference.expires = false;         // Don't auto-expire
+      
+      // Add shipments config for digital products
+      preference.shipments = {
+        mode: 'not_specified'
+      };
 
       try {
         // Debug logging
