@@ -437,24 +437,31 @@
       </div>
 
       <div class="mb-6">
-        <label class="block text-sm font-medium mb-2">Opções de Pagamento:</label>
-        <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
-          <label class="flex items-center cursor-pointer">
-            <input type="radio" name="payment-method" value="all" class="mr-3" checked>
-            <span class="text-2xl mr-3">🎆</span>
+        <label class="block text-sm font-medium mb-2">Método de Pagamento:</label>
+        <div class="space-y-3">
+          <label class="flex items-center p-3 border-2 border-blue-200 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100">
+            <input type="radio" name="payment-method" value="pix" class="mr-3" checked>
+            <span class="text-2xl mr-3">🚀</span>
             <div>
-              <div class="font-medium text-green-800">Mostrar TODAS as opções de pagamento</div>
-              <div class="text-sm text-green-600 mt-1">
-                ✅ PIX (instantâneo)<br>
-                ✅ Cartão de Crédito (1x a 12x)<br>
-                ✅ Boleto Bancário<br>
-                ✅ Outras opções disponíveis
-              </div>
-              <div class="text-xs text-blue-600 mt-2">
-                💡 <strong>Você escolherá a forma de pagamento na próxima tela do Mercado Pago</strong>
-              </div>
+              <div class="font-bold text-blue-800">PIX - Pagamento Instantâneo</div>
+              <div class="text-sm text-blue-600">✅ Aprovação imediata • ✅ Sem taxas • ✅ Disponível 24h</div>
+              <div class="text-xs text-green-600 font-bold">🎯 RECOMENDADO - Mais rápido e seguro!</div>
             </div>
           </label>
+          
+          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+            <input type="radio" name="payment-method" value="credit_card" class="mr-3">
+            <span class="text-2xl mr-3">💳</span>
+            <div>
+              <div class="font-medium">Cartão de Crédito</div>
+              <div class="text-sm text-gray-600">💳 Visa, Mastercard, Elo • 📅 Parcele até 12x</div>
+            </div>
+          </label>
+        </div>
+        <div class="mt-3 p-3 bg-green-100 rounded-lg">
+          <p class="text-sm text-green-800">
+            🔒 <strong>100% Seguro:</strong> Pagamento processado diretamente na sua Loja DeCastro, sem redirecionamentos!
+          </p>
         </div>
       </div>
 
@@ -1808,3 +1815,4 @@
   </script>
 </body>
 </html>
+
