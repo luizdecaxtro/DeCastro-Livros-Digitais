@@ -6,13 +6,10 @@
   <title>Loja DeCastro - Produtos Digitais</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
   <style>
-    .modal-overlay {
-      backdrop-filter: blur(4px);
-    }
-    .fade-in {
-      animation: fadeIn 0.3s ease-in;
-    }
+    .modal-overlay { backdrop-filter: blur(4px); }
+    .fade-in { animation: fadeIn 0.3s ease-in; }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -22,17 +19,6 @@
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
-    }
-    button {
-      min-height: 40px;
-      display: inline-flex !important;
-      align-items: center;
-      justify-content: center;
-    }
-    .qr-placeholder {
-      background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
-      background-size: 20px 20px;
-      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     }
   </style>
 </head>
@@ -49,25 +35,25 @@
   <nav class="bg-white shadow-sm">
     <div class="max-w-6xl mx-auto px-4">
       <div class="flex space-x-8">
-        <button onclick="switchTab('loja')" id="tab-loja" class="py-4 px-2 border-b-2 border-blue-600 font-medium text-blue-600 transition-colors">
+        <button onclick="switchTab('loja')" id="tab-loja" class="py-4 px-2 border-b-2 border-blue-600 font-medium text-blue-600">
           🏪 Loja
         </button>
-        <button onclick="switchTab('carrinho')" id="tab-carrinho" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors">
+        <button onclick="switchTab('carrinho')" id="tab-carrinho" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300">
           🛒 Carrinho (<span id="cart-count">0</span>)
         </button>
-        <button onclick="switchTab('admin')" id="tab-admin" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors">
+        <button onclick="switchTab('admin')" id="tab-admin" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300">
           ⚙️ Administração (<span id="products-count">0</span>)
         </button>
-        <button onclick="switchTab('vendas')" id="tab-vendas" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors">
+        <button onclick="switchTab('vendas')" id="tab-vendas" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300">
           💰 Vendas (<span id="sales-count">0</span>)
         </button>
-        <button onclick="switchTab('termos')" id="tab-termos" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors">
-          📜 Termos de Uso
+        <button onclick="switchTab('termos')" id="tab-termos" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300">
+          📜 Termos
         </button>
-        <button onclick="switchTab('privacidade')" id="tab-privacidade" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors">
+        <button onclick="switchTab('privacidade')" id="tab-privacidade" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300">
           🔒 Privacidade
         </button>
-        <button onclick="switchTab('contato')" id="tab-contato" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors">
+        <button onclick="switchTab('contato')" id="tab-contato" class="py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300">
           📞 Contato
         </button>
       </div>
@@ -84,12 +70,12 @@
           <i data-lucide="store" class="w-6 h-6"></i>
           Produtos Disponíveis
         </h2>
-        <button onclick="openProductForm()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors font-medium">
+        <button onclick="openProductForm()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center gap-2">
           ➕ Cadastrar Produto
         </button>
       </div>
       <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <!-- Products will be rendered here -->
+        <!-- Products rendered here -->
       </div>
     </div>
 
@@ -98,26 +84,35 @@
       <div class="bg-white rounded-lg shadow p-6">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
           <i data-lucide="shopping-cart" class="w-6 h-6"></i>
-          Seu Carrinho
+          Carrinho de Compras
         </h2>
-        <div id="cart-items">
-          <!-- Cart items will be rendered here -->
-        </div>
-        <div id="cart-summary" class="mt-6 pt-6 border-t">
-          <!-- Cart summary will be rendered here -->
-        </div>
+        <div id="cart-items"></div>
+        <div id="cart-summary" class="mt-6 p-4 bg-gray-50 rounded-lg"></div>
       </div>
     </div>
 
     <!-- Admin Tab -->
     <div id="admin-content" class="hidden fade-in">
       <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
-          <i data-lucide="settings" class="w-6 h-6"></i>
-          Administração de Produtos
-        </h2>
+        <div class="mb-6 flex justify-between items-center">
+          <h2 class="text-2xl font-bold flex items-center gap-2">
+            <i data-lucide="settings" class="w-6 h-6"></i>
+            Administração
+          </h2>
+          <div class="flex gap-3">
+            <button onclick="openCredentialsModal()" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 flex items-center gap-2 text-sm font-medium">
+              MP Credenciais
+            </button>
+            <button onclick="openSettingsModal()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-2 text-sm font-medium">
+              ⚙️ Configurações
+            </button>
+            <button onclick="openProductForm()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center gap-2">
+              ➕ Novo Produto
+            </button>
+          </div>
+        </div>
         <div id="admin-products-list">
-          <!-- Admin products will be rendered here -->
+          <!-- Admin products rendered here -->
         </div>
       </div>
     </div>
@@ -127,10 +122,10 @@
       <div class="bg-white rounded-lg shadow p-6">
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
           <i data-lucide="dollar-sign" class="w-6 h-6"></i>
-          Vendas Realizadas
+          Histórico de Vendas
         </h2>
         <div id="sales-list">
-          <!-- Sales will be rendered here -->
+          <!-- Sales rendered here -->
         </div>
       </div>
     </div>
@@ -144,46 +139,28 @@
         </h2>
         <div class="prose max-w-none">
           <h3 class="text-lg font-semibold mb-3">📋 1. Aceitação dos Termos</h3>
-          <p>Ao acessar e utilizar a <strong>Loja DeCastro</strong>, você concorda integralmente com estes Termos de Uso. Se não concordar com algum item, não utilize nossos serviços.</p>
+          <p>Ao utilizar a <strong>Loja DeCastro</strong>, você concorda com estes termos de uso.</p>
           
-          <h3 class="text-lg font-semibold mb-3 mt-6">📱 2. Sobre os Produtos Digitais</h3>
+          <h3 class="text-lg font-semibold mb-3 mt-6">📱 2. Produtos Digitais</h3>
           <ul class="space-y-2">
-            <li><strong>Entrega Imediata:</strong> Produtos digitais são liberados automaticamente após confirmação do pagamento</li>
-            <li><strong>Acesso Vitalicio:</strong> Uma vez adquirido, você terá acesso permanente ao produto</li>
-            <li><strong>Formato Digital:</strong> Todos os produtos são entregues em formato digital (PDF, vídeo, software, etc.)</li>
-            <li><strong>Compatibilidade:</strong> Verificamos compatibilidade com principais dispositivos e sistemas</li>
+            <li><strong>Entrega:</strong> Produtos liberados após confirmação do pagamento</li>
+            <li><strong>Acesso:</strong> Vitalício uma vez adquirido</li>
+            <li><strong>Formato:</strong> Digital (PDF, vídeo, software)</li>
           </ul>
           
-          <h3 class="text-lg font-semibold mb-3 mt-6">💰 3. Pagamentos e Reembolsos</h3>
+          <h3 class="text-lg font-semibold mb-3 mt-6">💰 3. Pagamentos</h3>
           <ul class="space-y-2">
-            <li><strong>Métodos Aceitos:</strong> PIX (instantâneo) e Cartão de Crédito</li>
-            <li><strong>Segurança:</strong> Todos os pagamentos são processados com criptografia SSL</li>
-            <li><strong>Reembolso:</strong> Até 7 dias corridos para produtos não acessados/baixados</li>
-            <li><strong>Problemas Técnicos:</strong> Garantia de 30 dias para questões técnicas</li>
+            <li><strong>PIX:</strong> Instantâneo e sem taxas</li>
+            <li><strong>Cartão:</strong> Parcelamento disponível</li>
+            <li><strong>Reembolso:</strong> 7 dias para produtos não acessados</li>
           </ul>
           
-          <h3 class="text-lg font-semibold mb-3 mt-6">🚫 4. Uso Proibido</h3>
+          <h3 class="text-lg font-semibold mb-3 mt-6">⚠️ 4. Uso Responsável</h3>
           <ul class="space-y-2">
-            <li>É <strong>proibido</strong> compartilhar, distribuir ou revender os produtos adquiridos</li>
-            <li>Não é permitido fazer engenharia reversa ou modificar os produtos</li>
-            <li>O uso comercial depende de licença específica (consulte-nos)</li>
-            <li>Violações podem resultar em suspensão e ações legais</li>
+            <li>Proibido compartilhar ou revender produtos</li>
+            <li>Uso pessoal conforme licença</li>
+            <li>Violações podem resultar em suspensão</li>
           </ul>
-          
-          <h3 class="text-lg font-semibold mb-3 mt-6">🔒 5. Responsabilidades</h3>
-          <ul class="space-y-2">
-            <li><strong>Nossa:</strong> Entregar produtos conforme descrito e manter segurança dos dados</li>
-            <li><strong>Sua:</strong> Usar produtos legalmente e manter credenciais seguras</li>
-            <li><strong>Suporte:</strong> Oferecemos suporte técnico para instalação e uso básico</li>
-            <li><strong>Atualizações:</strong> Produtos podem receber atualizações gratuitas</li>
-          </ul>
-          
-          <h3 class="text-lg font-semibold mb-3 mt-6">⚙️ 6. Alterações</h3>
-          <p>Reservamo-nos o direito de alterar estes termos. Alterações significativas serão notificadas por email. Uso contínuo após alterações implica aceitação.</p>
-          
-          <div class="bg-blue-50 p-4 rounded-lg mt-6">
-            <p class="text-sm text-blue-700"><strong>📞 Dúvidas?</strong> Entre em contato pelo WhatsApp (98) 98880-4678 ou email loja@decastro.com.br</p>
-          </div>
         </div>
       </div>
     </div>
@@ -196,62 +173,34 @@
           Política de Privacidade
         </h2>
         <div class="prose max-w-none">
-          <h3 class="text-lg font-semibold mb-3">🔒 1. Compromisso com sua Privacidade</h3>
-          <p>A <strong>Loja DeCastro</strong> respeita sua privacidade e está comprometida em proteger seus dados pessoais conforme a Lei Geral de Proteção de Dados (LGPD).</p>
+          <h3 class="text-lg font-semibold mb-3">🔒 1. Proteção de Dados</h3>
+          <p>Respeitamos sua privacidade conforme a LGPD.</p>
           
-          <h3 class="text-lg font-semibold mb-3 mt-6">📊 2. Dados que Coletamos</h3>
+          <h3 class="text-lg font-semibold mb-3 mt-6">📊 2. Dados Coletados</h3>
           <ul class="space-y-2">
-            <li><strong>Dados de Cadastro:</strong> Nome, email, telefone para processamento de pedidos</li>
-            <li><strong>Dados de Pagamento:</strong> Informações bancárias processadas por gateways seguros</li>
-            <li><strong>Dados de Navegação:</strong> IP, browser, páginas visitadas para melhorar a experiência</li>
-            <li><strong>Dados de Uso:</strong> Como você usa nossos produtos para oferecer suporte</li>
+            <li><strong>Cadastro:</strong> Nome, email, telefone</li>
+            <li><strong>Pagamento:</strong> Dados processados por gateways seguros</li>
+            <li><strong>Navegação:</strong> Cookies para melhorar experiência</li>
           </ul>
           
-          <h3 class="text-lg font-semibold mb-3 mt-6">🎯 3. Como Usamos seus Dados</h3>
+          <h3 class="text-lg font-semibold mb-3 mt-6">🎯 3. Como Usamos</h3>
           <ul class="space-y-2">
-            <li><strong>Processamento:</strong> Para processar compras e entregar produtos</li>
-            <li><strong>Comunicação:</strong> Envio de confirmações, suporte e atualizações</li>
-            <li><strong>Melhorias:</strong> Análise para aprimorar produtos e serviços</li>
-            <li><strong>Legal:</strong> Cumprimento de obrigações legais e fiscais</li>
+            <li>Processamento de compras</li>
+            <li>Suporte ao cliente</li>
+            <li>Melhorias no serviço</li>
+            <li>Cumprimento legal</li>
           </ul>
           
-          <h3 class="text-lg font-semibold mb-3 mt-6">🚫 4. Não Compartilhamos</h3>
+          <h3 class="text-lg font-semibold mb-3 mt-6">🛡️ 4. Seus Direitos</h3>
           <ul class="space-y-2">
-            <li>Seus dados <strong>NUNCA</strong> são vendidos para terceiros</li>
-            <li>Não enviamos spam ou emails não solicitados</li>
-            <li>Compartilhamento apenas com processadores de pagamento (obrigatório)</li>
-            <li>Dados anonimizados podem ser usados para estatísticas</li>
+            <li>Acesso aos seus dados</li>
+            <li>Correção de informações</li>
+            <li>Exclusão (direito ao esquecimento)</li>
+            <li>Portabilidade dos dados</li>
           </ul>
           
-          <h3 class="text-lg font-semibold mb-3 mt-6">🔐 5. Segurança</h3>
-          <ul class="space-y-2">
-            <li><strong>Criptografia SSL:</strong> Todos os dados em trânsito são criptografados</li>
-            <li><strong>Servidores Seguros:</strong> Armazenamento em datacenters certificados</li>
-            <li><strong>Acesso Restrito:</strong> Apenas funcionários autorizados acessam dados</li>
-            <li><strong>Backups:</strong> Cópias de segurança regulares para prevenção de perda</li>
-          </ul>
-          
-          <h3 class="text-lg font-semibold mb-3 mt-6">🎯 6. Seus Direitos</h3>
-          <ul class="space-y-2">
-            <li><strong>Acesso:</strong> Solicitar cópia dos seus dados</li>
-            <li><strong>Correção:</strong> Corrigir dados incorretos</li>
-            <li><strong>Exclusão:</strong> Solicitar remoção dos dados (direito ao esquecimento)</li>
-            <li><strong>Portabilidade:</strong> Receber dados em formato legível</li>
-          </ul>
-          
-          <h3 class="text-lg font-semibold mb-3 mt-6">💬 7. Cookies</h3>
-          <p>Utilizamos cookies para melhorar sua experiência de navegação, lembrar preferências e analisar o tráfego. Você pode desabilitar cookies no seu navegador.</p>
-          
-          <h3 class="text-lg font-semibold mb-3 mt-6">📞 8. Contato</h3>
-          <p>Para exercer seus direitos ou tirar dúvidas sobre privacidade, entre em contato:</p>
-          <ul class="space-y-1">
-            <li><strong>Email:</strong> privacidade@decastro.com.br</li>
-            <li><strong>WhatsApp:</strong> (98) 98880-4678</li>
-            <li><strong>Resposta:</strong> Até 15 dias úteis</li>
-          </ul>
-          
-          <div class="bg-green-50 p-4 rounded-lg mt-6">
-            <p class="text-sm text-green-700"><strong>🔒 Garantia:</strong> Seus dados estão seguros conosco. Esta política é atualizada regularmente para sua proteção.</p>
+          <div class="bg-blue-50 p-4 rounded-lg mt-6">
+            <p class="text-sm text-blue-700"><strong>📞 Contato:</strong> privacidade@decastro.com.br</p>
           </div>
         </div>
       </div>
@@ -269,26 +218,29 @@
             <h3 class="text-lg font-semibold mb-4">Informações de Contato</h3>
             <div class="space-y-3">
               <p class="flex items-center gap-2">
-                <i data-lucide="phone" class="w-4 h-4"></i>
-                <span>+55 (98) 98880-4678</span>
+                <i data-lucide="phone" class="w-4 h-4 text-green-600"></i>
+                <strong>WhatsApp:</strong> (98) 98880-4678
               </p>
               <p class="flex items-center gap-2">
-                <i data-lucide="mail" class="w-4 h-4"></i>
-                <span>contato@lojacastro.com</span>
+                <i data-lucide="mail" class="w-4 h-4 text-blue-600"></i>
+                <strong>Email:</strong> contato@decastro.com.br
               </p>
               <p class="flex items-center gap-2">
-                <i data-lucide="map-pin" class="w-4 h-4"></i>
-                <span>São Luís - MA</span>
+                <i data-lucide="clock" class="w-4 h-4 text-orange-600"></i>
+                <strong>Horário:</strong> Seg-Sex, 9h às 18h
               </p>
             </div>
           </div>
           <div>
-            <h3 class="text-lg font-semibold mb-4">Horário de Atendimento</h3>
-            <div class="space-y-2">
-              <p>Segunda a Sexta: 8h às 18h</p>
-              <p>Sábado: 8h às 12h</p>
-              <p>Domingo: Fechado</p>
-            </div>
+            <h3 class="text-lg font-semibold mb-4">Envie uma Mensagem</h3>
+            <form class="space-y-3">
+              <input type="text" placeholder="Seu nome" class="w-full border rounded-lg px-3 py-2">
+              <input type="email" placeholder="Seu email" class="w-full border rounded-lg px-3 py-2">
+              <textarea placeholder="Sua mensagem" rows="4" class="w-full border rounded-lg px-3 py-2"></textarea>
+              <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                📧 Enviar Mensagem
+              </button>
+            </form>
           </div>
         </div>
       </div>
@@ -296,52 +248,92 @@
 
   </main>
 
+  <!-- Modals -->
+  
   <!-- Product Form Modal -->
   <div id="product-modal" class="fixed inset-0 bg-black bg-opacity-50 modal-overlay hidden z-50 flex items-center justify-center">
     <div class="bg-white rounded-lg p-6 w-full max-w-md m-4 fade-in">
       <h3 class="text-xl font-bold mb-4">Cadastrar Produto</h3>
-      <form id="product-form">
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium mb-1">Nome do Produto *</label>
-            <input type="text" id="product-name" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">Descrição</label>
-            <textarea id="product-description" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3"></textarea>
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">Preço (R$) *</label>
-              <input type="number" id="product-price" step="0.01" min="0" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-            </div>
-            <div>
-              <label class="block text-sm font-medium mb-1">Categoria</label>
-              <select id="product-category" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="Ebook">📚 Ebook</option>
-                <option value="Curso">🎓 Curso</option>
-                <option value="Template">📄 Template</option>
-                <option value="Software">💻 Software</option>
-                <option value="Audio">🎵 Audio</option>
-                <option value="Video">🎬 Video</option>
-                <option value="Outros">📦 Outros</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">URL da Imagem</label>
-            <input type="url" id="product-image" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://example.com/image.jpg">
-          </div>
-        </div>
+      <form id="product-form" class="space-y-4">
+        <input id="product-name" type="text" placeholder="Nome do produto" class="w-full border rounded-lg px-3 py-2" required>
+        <input id="product-price" type="number" step="0.01" placeholder="Preço (R$)" class="w-full border rounded-lg px-3 py-2" required>
+        <input id="product-category" type="text" placeholder="Categoria" class="w-full border rounded-lg px-3 py-2" required>
+        <textarea id="product-description" placeholder="Descrição" rows="3" class="w-full border rounded-lg px-3 py-2" required></textarea>
+        <input id="product-image" type="url" placeholder="URL da imagem" class="w-full border rounded-lg px-3 py-2">
         <div class="flex gap-2 mt-6">
-          <button type="button" onclick="closeProductModal()" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600">
+          <button type="button" onclick="closeProductModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
             Cancelar
           </button>
-          <button type="submit" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
-            Salvar
+          <button type="submit" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+            Cadastrar
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-50 modal-overlay hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6 w-full max-w-lg m-4 fade-in">
+      <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <i data-lucide="settings" class="w-5 h-5"></i>
+        Configurações da Loja
+      </h3>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Nome da Loja</label>
+          <input id="store-name" type="text" class="w-full border rounded-lg px-3 py-2" value="Loja DeCastro">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Chave PIX</label>
+          <input id="pix-key" type="text" class="w-full border rounded-lg px-3 py-2" value="98988804678">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Email de Contato</label>
+          <input id="contact-email" type="email" class="w-full border rounded-lg px-3 py-2" value="contato@decastro.com.br">
+        </div>
+      </div>
+      <div class="flex gap-2 mt-6">
+        <button onclick="closeSettingsModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+          Cancelar
+        </button>
+        <button onclick="saveSettings()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+          ✅ Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Credentials Modal -->
+  <div id="credentials-modal" class="fixed inset-0 bg-black bg-opacity-50 modal-overlay hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6 w-full max-w-lg m-4 fade-in">
+      <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <i data-lucide="key" class="w-5 h-5"></i>
+        Credenciais Mercado Pago
+      </h3>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Access Token</label>
+          <input id="mp-access-token" type="password" class="w-full border rounded-lg px-3 py-2" placeholder="APP_USR-...">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Public Key</label>
+          <input id="mp-public-key" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="APP_USR-...">
+        </div>
+        <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+          <p class="text-sm text-yellow-700">
+            <strong>⚠️ Importante:</strong> Dados salvos localmente no navegador.
+          </p>
+        </div>
+      </div>
+      <div class="flex gap-2 mt-6">
+        <button onclick="closeCredentialsModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+          Cancelar
+        </button>
+        <button onclick="saveCredentials()" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+          🔐 Salvar Credenciais
+        </button>
+      </div>
     </div>
   </div>
 
@@ -352,12 +344,12 @@
       
       <div class="mb-4">
         <label class="block text-sm font-medium mb-1">Nome Completo *</label>
-        <input id="customer-name" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Digite seu nome completo" required>
+        <input id="customer-name" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="Digite seu nome completo" required>
       </div>
 
-      <div class="mb-4">
+      <div class="mb-6">
         <label class="block text-sm font-medium mb-1">Email *</label>
-        <input id="customer-email" type="email" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="seu@email.com" required>
+        <input id="customer-email" type="email" class="w-full border rounded-lg px-3 py-2" placeholder="seu@email.com" required>
       </div>
 
       <div class="mb-6">
@@ -369,10 +361,9 @@
             <div>
               <div class="font-bold text-blue-800">PIX - Pagamento Instantâneo</div>
               <div class="text-sm text-blue-600">✅ Aprovação imediata • ✅ Sem taxas • ✅ Disponível 24h</div>
-              <div class="text-xs text-green-600 font-bold">🎯 RECOMENDADO - Mais rápido e seguro!</div>
             </div>
           </label>
-
+          
           <label class="flex items-center p-3 border-2 border-gray-200 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
             <input type="radio" name="payment-method" value="credit_card" class="mr-3">
             <span class="text-2xl mr-3">💳</span>
@@ -389,125 +380,116 @@
           Cancelar
         </button>
         <button onclick="processPayment()" class="flex-1 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700">
-          💰 Pagar Agora
+          💰 Finalizar Pagamento
         </button>
       </div>
     </div>
   </div>
 
-<script type="module">
+<script>
   // Global variables
-  let products = [];
+  let products = [
+    {
+      id: 1,
+      name: 'JavaScript Completo',
+      price: 49.99,
+      category: 'Programação',
+      description: 'Aprenda JavaScript do zero ao avançado com projetos práticos.',
+      image: 'https://via.placeholder.com/300x200?text=JavaScript'
+    },
+    {
+      id: 2,
+      name: 'Marketing Digital',
+      price: 39.99,
+      category: 'Negócios',
+      description: 'Estratégias completas de marketing digital para alavancar seu negócio.',
+      image: 'https://via.placeholder.com/300x200?text=Marketing'
+    }
+  ];
+  
   let cartItems = [];
-  let sales = [];
   let currentTab = 'loja';
+  let sales = [];
 
-  // Initialize app
-  document.addEventListener('DOMContentLoaded', function() {
-    loadFromStorage();
-    renderProductsGrid();
-    updateCartDisplay();
-    updateCartCount();
-    updateProductsCount();
-    updateSalesCount();
-    lucide.createIcons();
+  // Tab navigation
+  function switchTab(tab) {
+    // Hide all content
+    document.querySelectorAll('[id$="-content"]').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('[id^="tab-"]').forEach(el => {
+      el.className = 'py-4 px-2 border-b-2 border-transparent font-medium text-gray-700 hover:text-gray-900 hover:border-gray-300';
+    });
     
-    // Add some sample products if none exist
-    if (products.length === 0) {
-      addSampleProducts();
-    }
-  });
-
-  // Tab switching
-  function switchTab(tabName) {
-    // Hide all content divs
-    const contents = ['loja', 'carrinho', 'admin', 'vendas', 'termos', 'privacidade', 'contato'];
-    contents.forEach(content => {
-      document.getElementById(content + '-content').classList.add('hidden');
-    });
-
-    // Remove active state from all tabs
-    contents.forEach(content => {
-      const tab = document.getElementById('tab-' + content);
-      tab.classList.remove('border-blue-600', 'text-blue-600');
-      tab.classList.add('border-transparent', 'text-gray-700');
-    });
-
     // Show selected content
-    document.getElementById(tabName + '-content').classList.remove('hidden');
-
-    // Activate selected tab
-    const activeTab = document.getElementById('tab-' + tabName);
-    activeTab.classList.add('border-blue-600', 'text-blue-600');
-    activeTab.classList.remove('border-transparent', 'text-gray-700');
-
-    currentTab = tabName;
-
+    document.getElementById(tab + '-content').classList.remove('hidden');
+    document.getElementById('tab-' + tab).className = 'py-4 px-2 border-b-2 border-blue-600 font-medium text-blue-600';
+    
+    currentTab = tab;
+    
     // Render content based on tab
-    switch(tabName) {
-      case 'carrinho':
-        renderCartItems();
-        break;
-      case 'admin':
-        renderAdminProducts();
-        break;
-      case 'vendas':
-        renderSales();
-        break;
+    if (tab === 'loja') {
+      renderProductGrid();
+    } else if (tab === 'carrinho') {
+      renderCartItems();
+    } else if (tab === 'admin') {
+      renderAdminProducts();
+    } else if (tab === 'vendas') {
+      renderSales();
     }
-
-    // Recreate icons
+    
+    // Initialize Lucide icons
     lucide.createIcons();
-  }
-
-  // Storage functions
-  function saveToStorage() {
-    localStorage.setItem('products', JSON.stringify(products));
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    localStorage.setItem('sales', JSON.stringify(sales));
-  }
-
-  function loadFromStorage() {
-    products = JSON.parse(localStorage.getItem('products') || '[]');
-    cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    sales = JSON.parse(localStorage.getItem('sales') || '[]');
   }
 
   // Product management
-  function addSampleProducts() {
-    const sampleProducts = [
-      {
-        id: Date.now() + 1,
-        name: "Ebook de Marketing Digital",
-        description: "Guia completo para dominar o marketing digital",
-        price: 29.90,
-        category: "Ebook",
-        image: "https://via.placeholder.com/300x200/3B82F6/FFFFFF?text=📚+Ebook"
-      },
-      {
-        id: Date.now() + 2,
-        name: "Curso de Programação",
-        description: "Aprenda programação do zero ao avançado",
-        price: 199.90,
-        category: "Curso",
-        image: "https://via.placeholder.com/300x200/10B981/FFFFFF?text=🎓+Curso"
-      },
-      {
-        id: Date.now() + 3,
-        name: "Template de Site",
-        description: "Template profissional para seu site",
-        price: 49.90,
-        category: "Template",
-        image: "https://via.placeholder.com/300x200/F59E0B/FFFFFF?text=📄+Template"
-      }
-    ];
-
-    products.push(...sampleProducts);
-    saveToStorage();
-    renderProductsGrid();
-    updateProductsCount();
+  function renderProductGrid() {
+    const grid = document.getElementById('products-grid');
+    if (products.length === 0) {
+      grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8">Nenhum produto cadastrado ainda.</div>';
+      return;
+    }
+    
+    grid.innerHTML = products.map(product => `
+      <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+        <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
+        <div class="p-4">
+          <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full mb-2">${product.category}</span>
+          <h3 class="font-bold text-lg mb-2">${product.name}</h3>
+          <p class="text-gray-600 text-sm mb-3 line-clamp-2">${product.description}</p>
+          <div class="flex justify-between items-center">
+            <span class="text-2xl font-bold text-green-600">R$ ${product.price.toFixed(2)}</span>
+            <button onclick="addToCart(${product.id})" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-1">
+              🛒 Comprar
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
   }
 
+  function renderAdminProducts() {
+    const list = document.getElementById('admin-products-list');
+    if (products.length === 0) {
+      list.innerHTML = '<div class="text-center text-gray-500 py-8">Nenhum produto cadastrado.</div>';
+      return;
+    }
+    
+    list.innerHTML = products.map(product => `
+      <div class="flex items-center justify-between p-4 border rounded-lg mb-3">
+        <div class="flex items-center gap-4">
+          <img src="${product.image}" alt="${product.name}" class="w-16 h-16 object-cover rounded">
+          <div>
+            <h4 class="font-bold">${product.name}</h4>
+            <p class="text-gray-600">${product.category} • R$ ${product.price.toFixed(2)}</p>
+          </div>
+        </div>
+        <button onclick="deleteProduct(${product.id})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+          🗑️ Excluir
+        </button>
+      </div>
+    `).join('');
+  }
+
+  // Product form
   function openProductForm() {
     document.getElementById('product-modal').classList.remove('hidden');
   }
@@ -517,77 +499,42 @@
     document.getElementById('product-form').reset();
   }
 
-  // Handle product form submission
-  document.getElementById('product-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+  function addProduct(event) {
+    event.preventDefault();
     
-    const name = document.getElementById('product-name').value;
-    const description = document.getElementById('product-description').value;
-    const price = parseFloat(document.getElementById('product-price').value);
-    const category = document.getElementById('product-category').value;
-    const image = document.getElementById('product-image').value || `https://via.placeholder.com/300x200/6366F1/FFFFFF?text=${encodeURIComponent(category)}`;
-
     const product = {
       id: Date.now(),
-      name,
-      description,
-      price,
-      category,
-      image
+      name: document.getElementById('product-name').value,
+      price: parseFloat(document.getElementById('product-price').value),
+      category: document.getElementById('product-category').value,
+      description: document.getElementById('product-description').value,
+      image: document.getElementById('product-image').value || 'https://via.placeholder.com/300x200?text=Produto'
     };
-
+    
     products.push(product);
-    saveToStorage();
-    renderProductsGrid();
-    updateProductsCount();
+    saveProducts();
     closeProductModal();
+    updateCounters();
+    
+    if (currentTab === 'loja') renderProductGrid();
+    if (currentTab === 'admin') renderAdminProducts();
     
     alert('✅ Produto cadastrado com sucesso!');
-  });
-
-  function renderProductsGrid() {
-    const grid = document.getElementById('products-grid');
-    
-    if (products.length === 0) {
-      grid.innerHTML = `
-        <div class="col-span-full text-center py-12">
-          <p class="text-gray-500 text-lg">Nenhum produto cadastrado</p>
-          <button onclick="openProductForm()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
-            Cadastrar Primeiro Produto
-          </button>
-        </div>
-      `;
-      return;
-    }
-
-    grid.innerHTML = products.map(product => `
-      <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
-        <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover rounded-t-lg" onerror="this.src='https://via.placeholder.com/300x200/6B7280/FFFFFF?text=📦+Produto'">
-        <div class="p-4">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${product.category}</span>
-          </div>
-          <h3 class="font-bold text-lg mb-2 line-clamp-2">${product.name}</h3>
-          <p class="text-gray-600 text-sm mb-3 line-clamp-2">${product.description}</p>
-          <div class="flex items-center justify-between">
-            <span class="text-2xl font-bold text-green-600">R$ ${product.price.toFixed(2)}</span>
-            <button onclick="addToCart(${product.id})" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
-              <i data-lucide="shopping-cart" class="w-4 h-4"></i>
-              Comprar
-            </button>
-          </div>
-        </div>
-      </div>
-    `).join('');
-
-    lucide.createIcons();
   }
 
-  // Cart functions
+  function deleteProduct(id) {
+    if (confirm('Tem certeza que deseja excluir este produto?')) {
+      products = products.filter(p => p.id !== id);
+      saveProducts();
+      updateCounters();
+      renderProductGrid();
+      renderAdminProducts();
+    }
+  }
+
+  // Cart management
   function addToCart(productId) {
     const product = products.find(p => p.id === productId);
-    if (!product) return;
-
     const existingItem = cartItems.find(item => item.productId === productId);
     
     if (existingItem) {
@@ -595,58 +542,24 @@
     } else {
       cartItems.push({
         productId: productId,
+        name: product.name,
+        price: product.price,
         quantity: 1
       });
     }
-
-    saveToStorage();
-    updateCartCount();
     
-    // Show feedback
-    alert(`✅ ${product.name} adicionado ao carrinho!`);
-  }
-
-  function removeFromCart(productId) {
-    const index = cartItems.findIndex(item => item.productId === productId);
-    if (index > -1) {
-      cartItems.splice(index, 1);
-      saveToStorage();
-      updateCartCount();
-      renderCartItems();
-    }
-  }
-
-  function updateQuantity(productId, newQuantity) {
-    const item = cartItems.find(item => item.productId === productId);
-    if (item) {
-      if (newQuantity <= 0) {
-        removeFromCart(productId);
-      } else {
-        item.quantity = newQuantity;
-        saveToStorage();
-        renderCartItems();
-      }
-    }
-  }
-
-  function updateCartCount() {
-    const count = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    document.getElementById('cart-count').textContent = count;
-  }
-
-  function updateProductsCount() {
-    document.getElementById('products-count').textContent = products.length;
-  }
-
-  function updateSalesCount() {
-    document.getElementById('sales-count').textContent = sales.length;
-  }
-
-  function calculateTotal() {
-    return cartItems.reduce((total, item) => {
-      const product = products.find(p => p.id === item.productId);
-      return total + (product ? product.price * item.quantity : 0);
-    }, 0);
+    saveCart();
+    updateCounters();
+    
+    // Show brief feedback
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '✅ Adicionado';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }, 1500);
   }
 
   function renderCartItems() {
@@ -654,42 +567,30 @@
     const summary = document.getElementById('cart-summary');
     
     if (cartItems.length === 0) {
-      container.innerHTML = `
-        <div class="text-center py-8">
-          <p class="text-gray-500 text-lg">Seu carrinho está vazio</p>
-          <button onclick="switchTab('loja')" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
-            Ver Produtos
-          </button>
-        </div>
-      `;
+      container.innerHTML = '<div class="text-center text-gray-500 py-8">Seu carrinho está vazio</div>';
       summary.innerHTML = '';
       return;
     }
-
-    container.innerHTML = cartItems.map(item => {
-      const product = products.find(p => p.id === item.productId);
-      if (!product) return '';
-
-      return `
-        <div class="flex items-center gap-4 p-4 border-b">
-          <img src="${product.image}" alt="${product.name}" class="w-16 h-16 object-cover rounded" onerror="this.src='https://via.placeholder.com/64x64/6B7280/FFFFFF?text=📦'">
-          <div class="flex-1">
-            <h4 class="font-semibold">${product.name}</h4>
-            <p class="text-green-600 font-bold">R$ ${product.price.toFixed(2)}</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <button onclick="updateQuantity(${product.id}, ${item.quantity - 1})" class="bg-gray-200 text-gray-700 w-8 h-8 rounded flex items-center justify-center hover:bg-gray-300">-</button>
-            <span class="mx-2 font-semibold">${item.quantity}</span>
-            <button onclick="updateQuantity(${product.id}, ${item.quantity + 1})" class="bg-gray-200 text-gray-700 w-8 h-8 rounded flex items-center justify-center hover:bg-gray-300">+</button>
-          </div>
-          <button onclick="removeFromCart(${product.id})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
-            Remover
-          </button>
+    
+    container.innerHTML = cartItems.map(item => `
+      <div class="flex justify-between items-center p-4 border-b">
+        <div>
+          <h4 class="font-bold">${item.name}</h4>
+          <p class="text-gray-600">R$ ${item.price.toFixed(2)} cada</p>
         </div>
-      `;
-    }).join('');
-
-    const total = calculateTotal();
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            <button onclick="updateQuantity(${item.productId}, -1)" class="bg-gray-200 px-2 py-1 rounded">-</button>
+            <span class="font-bold">${item.quantity}</span>
+            <button onclick="updateQuantity(${item.productId}, 1)" class="bg-gray-200 px-2 py-1 rounded">+</button>
+          </div>
+          <span class="font-bold text-green-600 w-20 text-right">R$ ${(item.price * item.quantity).toFixed(2)}</span>
+          <button onclick="removeFromCart(${item.productId})" class="text-red-500 hover:text-red-700">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+    
+    const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     summary.innerHTML = `
       <div class="flex justify-between items-center text-xl font-bold">
         <span>Total:</span>
@@ -701,13 +602,27 @@
     `;
   }
 
-  function updateCartDisplay() {
-    if (currentTab === 'carrinho') {
+  function updateQuantity(productId, change) {
+    const item = cartItems.find(item => item.productId === productId);
+    if (item) {
+      item.quantity += change;
+      if (item.quantity <= 0) {
+        cartItems = cartItems.filter(item => item.productId !== productId);
+      }
+      saveCart();
+      updateCounters();
       renderCartItems();
     }
   }
 
-  // Checkout functions
+  function removeFromCart(productId) {
+    cartItems = cartItems.filter(item => item.productId !== productId);
+    saveCart();
+    updateCounters();
+    renderCartItems();
+  }
+
+  // Checkout
   function openCheckout() {
     if (cartItems.length === 0) {
       alert('Seu carrinho está vazio!');
@@ -718,7 +633,6 @@
 
   function closePaymentModal() {
     document.getElementById('payment-modal').classList.add('hidden');
-    // Clear form
     document.getElementById('customer-name').value = '';
     document.getElementById('customer-email').value = '';
   }
@@ -726,38 +640,22 @@
   function processPayment() {
     const name = document.getElementById('customer-name').value.trim();
     const email = document.getElementById('customer-email').value.trim();
-    const paymentMethodRadio = document.querySelector('input[name="payment-method"]:checked');
-    
-    if (!paymentMethodRadio) {
-      alert('Por favor, selecione um método de pagamento.');
-      return;
-    }
-    
-    const paymentMethod = paymentMethodRadio.value;
-    console.log('🎯 Método selecionado:', paymentMethod);
+    const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value;
 
-    if (!name || !email) {
-      alert('Por favor, preencha nome e email.');
+    if (!name || !email || !paymentMethod) {
+      alert('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
 
-    if (!email.includes('@')) {
-      alert('Por favor, digite um email válido.');
-      return;
-    }
-
-    const total = calculateTotal();
+    const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     if (paymentMethod === 'pix') {
-      console.log('🚀 Redirecionando para PIX');
       showPixPayment(name, email, total);
-    } else if (paymentMethod === 'credit_card') {
-      console.log('💳 Redirecionando para Cartão');
+    } else {
       showCardPayment(name, email, total);
     }
   }
 
-  // PIX payment
   function showPixPayment(name, email, total) {
     const modal = document.getElementById('payment-modal');
     const modalContent = modal.querySelector('.bg-white');
@@ -771,105 +669,37 @@
             <div class="text-center text-green-600">
               <div class="text-4xl mb-2">📱</div>
               <p class="text-sm font-bold">Gerando QR Code...</p>
-              <p class="text-xs">R$ ${total.toFixed(2)}</p>
             </div>
           </div>
           
-          <div class="text-center">
-            <p class="font-bold text-green-800 mb-2">📱 Chave PIX para pagamento manual:</p>
-            <div class="bg-white p-3 rounded border-2 border-green-300">
-              <p class="text-lg font-bold text-green-700">+55 (98) 98880-4678</p>
-            </div>
-            <div class="flex gap-2 mt-3">
-              <button onclick="copyPixKey()" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
-                📋 Copiar Chave
-              </button>
-              <button onclick="copyPixPayload(${total})" class="flex-1 bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700">
-                📱 Copiar PIX Copia e Cola
-              </button>
-            </div>
+          <div class="bg-white p-3 rounded border">
+            <p class="text-sm font-bold text-green-700 mb-2">🔑 Chave PIX para pagamento manual:</p>
+            <p class="text-lg font-mono font-bold text-green-800">98988804678</p>
+            <button onclick="copyPixKey()" class="mt-2 bg-blue-500 text-white px-4 py-1 rounded text-sm hover:bg-blue-600">
+              📋 Copiar Chave
+            </button>
           </div>
         </div>
 
-        <div class="bg-blue-50 p-4 rounded-lg mb-6 border border-blue-200">
-          <h4 class="font-bold text-blue-800 mb-2">💡 Como pagar:</h4>
-          <div class="text-left text-sm text-blue-700 space-y-1">
-            <p>1. Abra seu app bancário</p>
-            <p>2. Vá em PIX → Pagar</p>
-            <p>3. Escaneie o QR Code ou use a chave: <strong>+5598988804678</strong></p>
-            <p>4. Confirme o valor: <strong>R$ ${total.toFixed(2)}</strong></p>
-            <p>5. Finalize o pagamento</p>
-          </div>
-        </div>
-
-        <div class="text-center mb-4">
-          <p class="text-sm text-gray-600">⏱️ Após o pagamento, seus produtos serão liberados automaticamente</p>
+        <div class="mb-4">
+          <p class="text-lg font-bold">Valor: R$ ${total.toFixed(2)}</p>
         </div>
 
         <div class="flex gap-2">
-          <button onclick="closePaymentModal()" class="flex-1 bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-600">
+          <button onclick="closePaymentModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg">
             Cancelar
           </button>
-          <button onclick="simulatePixPayment('${name}', '${email}', ${total})" class="flex-1 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700">
+          <button onclick="simulatePixPayment('${name}', '${email}', ${total})" class="flex-1 bg-green-600 text-white py-2 rounded-lg">
             ✅ Simular Pagamento
           </button>
         </div>
       </div>
     `;
-    
-    // Gerar QR Code real
-    setTimeout(() => generatePixQRCode(total), 500);
+
+    // Generate QR Code
+    setTimeout(() => generatePixQR(total), 500);
   }
 
-  function copyPixKey() {
-    navigator.clipboard.writeText('+5598988804678').then(() => {
-      alert('📋 Chave PIX copiada!\n\nAgora cole no seu app bancário:\n1. Abra PIX → Pagar\n2. Cole a chave\n3. Confirme o valor');
-    }).catch(() => {
-      alert('📱 Chave PIX: +5598988804678\n\nCopie manualmente e cole no seu app bancário');
-    });
-  }
-  
-  function copyPixPayload(amount) {
-    // Usar gerador de produção
-    const payload = createRealPixPayload('98988804678', amount, 'LOJA DECASTRO');
-    
-    if (!payload) {
-      alert('❌ Erro ao gerar PIX. Tente novamente.');
-      return;
-    }
-    
-    console.log('📋 Copiando PIX REAL:', payload);
-    
-    navigator.clipboard.writeText(payload).then(() => {
-      alert('📋 PIX Copia e Cola copiado!\n\nNo seu app bancário:\n📱 PIX → Pagar → Copia e Cola\n📋 Cole o código\n✅ Confirme: R$ ' + amount.toFixed(2));
-    }).catch(() => {
-      // Fallback para copia manual
-      const textarea = document.createElement('textarea');
-      textarea.value = payload;
-      textarea.style.position = 'absolute';
-      textarea.style.left = '-9999px';
-      document.body.appendChild(textarea);
-      textarea.select();
-      textarea.setSelectionRange(0, 99999);
-      
-      try {
-        document.execCommand('copy');
-        alert('📋 PIX copiado! Cole no app bancário em PIX → Copia e Cola');
-      } catch (err) {
-        prompt('📱 Copie o código PIX abaixo (Ctrl+A, Ctrl+C):', payload);
-      }
-      
-      document.body.removeChild(textarea);
-    });
-  }
-
-  function simulatePixPayment(name, email, total) {
-    if (confirm('🧪 SIMULAÇÃO: Confirmar que o PIX foi pago?')) {
-      completePurchase(name, email, total, 'PIX');
-    }
-  }
-
-  // Card payment
   function showCardPayment(name, email, total) {
     const modal = document.getElementById('payment-modal');
     const modalContent = modal.querySelector('.bg-white');
@@ -883,16 +713,14 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Número do Cartão</label>
             <input type="text" placeholder="0000 0000 0000 0000" maxlength="19" 
-                   class="w-full p-3 border border-gray-300 rounded-lg" 
-                   onkeyup="formatCardNumber(this)" required>
+                   class="w-full p-3 border border-gray-300 rounded-lg" required>
           </div>
           
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Validade</label>
               <input type="text" placeholder="MM/AA" maxlength="5" 
-                     class="w-full p-3 border border-gray-300 rounded-lg" 
-                     onkeyup="formatExpiry(this)" required>
+                     class="w-full p-3 border border-gray-300 rounded-lg" required>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">CVV</label>
@@ -906,532 +734,241 @@
             <input type="text" placeholder="NOME COMPLETO" 
                    class="w-full p-3 border border-gray-300 rounded-lg" required>
           </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Parcelas</label>
-            <select class="w-full p-3 border border-gray-300 rounded-lg" required>
-              <option value="1">1x de R$ ${total.toFixed(2)} (à vista)</option>
-              <option value="2">2x de R$ ${(total/2).toFixed(2)}</option>
-              <option value="3">3x de R$ ${(total/3).toFixed(2)}</option>
-              <option value="6">6x de R$ ${(total/6).toFixed(2)}</option>
-            </select>
-          </div>
         </form>
         
-        <div class="bg-yellow-50 p-3 rounded-lg mt-4 mb-4 border border-yellow-200">
-          <p class="text-yellow-800 text-sm">🧪 <strong>Modo Simulação:</strong> Interface de exemplo. Em produção seria integrado com gateway real.</p>
-        </div>
-        
         <div class="flex gap-2 mt-6">
-          <button onclick="closePaymentModal()" class="flex-1 bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-600">
+          <button onclick="closePaymentModal()" class="flex-1 bg-gray-500 text-white py-3 rounded-lg">
             Cancelar
           </button>
-          <button onclick="simulateCardPayment('${name}', '${email}', ${total})" class="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
-            💳 Simular Pagamento
+          <button onclick="simulateCardPayment('${name}', '${email}', ${total})" class="flex-1 bg-blue-600 text-white py-3 rounded-lg">
+            💳 Processar Pagamento
           </button>
         </div>
       </div>
     `;
   }
 
-  function formatCardNumber(input) {
-    let value = input.value.replace(/\D/g, '');
-    value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
-    input.value = value;
+  // PIX functions
+  function generatePixQR(amount) {
+    const pixData = createPixPayload(amount);
+    const container = document.getElementById('qr-code-container');
+    
+    QRCode.toCanvas(document.createElement('canvas'), pixData, {
+      width: 190,
+      margin: 2
+    }, function (error, canvas) {
+      if (error) {
+        console.error('QR Code error:', error);
+        container.innerHTML = '<div class="text-red-500">Erro ao gerar QR Code</div>';
+      } else {
+        container.innerHTML = '';
+        container.appendChild(canvas);
+      }
+    });
   }
 
-  function formatExpiry(input) {
-    let value = input.value.replace(/\D/g, '');
-    if (value.length >= 2) {
-      value = value.substring(0,2) + '/' + value.substring(2,4);
+  function createPixPayload(amount) {
+    // PIX payload básico funcional
+    const key = '98988804678';
+    const merchant = 'LOJA DECASTRO';
+    const city = 'SAO LUIS';
+    const value = amount.toFixed(2);
+    
+    let payload = '';
+    payload += '000201';
+    payload += '010212';
+    payload += '26' + (14 + 11 + key.length).toString().padStart(2, '0');
+    payload += '0014BR.GOV.BCB.PIX';
+    payload += '01' + key.length.toString().padStart(2, '0') + key;
+    payload += '52040000';
+    payload += '5303986';
+    payload += '54' + value.length.toString().padStart(2, '0') + value;
+    payload += '5802BR';
+    payload += '59' + merchant.length.toString().padStart(2, '0') + merchant;
+    payload += '60' + city.length.toString().padStart(2, '0') + city;
+    payload += '6304';
+    
+    // Calculate CRC16
+    const crc = calculateCRC16(payload);
+    return payload.slice(0, -4) + crc;
+  }
+
+  function calculateCRC16(str) {
+    let crc = 0xFFFF;
+    for (let i = 0; i < str.length; i++) {
+      crc ^= str.charCodeAt(i) << 8;
+      for (let j = 0; j < 8; j++) {
+        crc = crc & 0x8000 ? (crc << 1) ^ 0x1021 : crc << 1;
+      }
     }
-    input.value = value;
+    return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+  }
+
+  function copyPixKey() {
+    navigator.clipboard.writeText('98988804678').then(() => {
+      alert('✅ Chave PIX copiada!');
+    });
+  }
+
+  function simulatePixPayment(name, email, total) {
+    if (confirm('🧪 SIMULAÇÃO: Confirmar que o PIX foi pago?')) {
+      completePurchase(name, email, total, 'PIX');
+    }
   }
 
   function simulateCardPayment(name, email, total) {
-    const form = document.getElementById('card-form');
-    if (!form.checkValidity()) {
-      alert('Por favor, preencha todos os campos do cartão.');
-      return;
-    }
-    
-    if (confirm('🧪 SIMULAÇÃO: Confirmar pagamento com cartão?')) {
+    if (confirm('🧪 SIMULAÇÃO: Confirmar processamento do cartão?')) {
       completePurchase(name, email, total, 'Cartão de Crédito');
     }
   }
 
-  // Complete purchase
-  function completePurchase(name, email, total, paymentMethod) {
-    // Create sale record
+  function completePurchase(name, email, total, method) {
     const sale = {
-      id: 'VENDA-' + Date.now(),
-      date: new Date().toLocaleDateString('pt-BR'),
-      time: new Date().toLocaleTimeString('pt-BR'),
+      id: Date.now(),
+      date: new Date().toLocaleString('pt-BR'),
       customer: name,
       email: email,
-      items: cartItems.map(item => {
-        const product = products.find(p => p.id === item.productId);
-        return {
-          name: product.name,
-          price: product.price,
-          quantity: item.quantity,
-          subtotal: product.price * item.quantity
-        };
-      }),
+      items: [...cartItems],
       total: total,
-      paymentMethod: paymentMethod,
-      status: 'Aprovado'
+      method: method
     };
-
+    
     sales.push(sale);
+    saveSales();
     
     // Clear cart
-    cartItems.length = 0;
+    cartItems = [];
+    saveCart();
+    updateCounters();
     
-    // Save to storage
-    saveToStorage();
-    
-    // Update counts
-    updateCartCount();
-    updateSalesCount();
-    
-    // Close modal
     closePaymentModal();
     
-    // Show success message
-    alert(`🎉 PAGAMENTO APROVADO!\n\n💰 Venda: ${sale.id}\n👤 Cliente: ${name}\n💳 Método: ${paymentMethod}\n💵 Total: R$ ${total.toFixed(2)}\n\n✅ Compra realizada com sucesso!`);
+    alert(`✅ Compra realizada com sucesso!\n\nCliente: ${name}\nTotal: R$ ${total.toFixed(2)}\nMétodo: ${method}`);
     
     // Switch to sales tab
     switchTab('vendas');
   }
 
-  // Admin functions
-  function renderAdminProducts() {
-    const container = document.getElementById('admin-products-list');
-    
-    if (products.length === 0) {
-      container.innerHTML = `
-        <div class="text-center py-8">
-          <p class="text-gray-500 text-lg">Nenhum produto cadastrado</p>
-          <button onclick="openProductForm()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
-            Cadastrar Primeiro Produto
-          </button>
-        </div>
-      `;
-      return;
-    }
-
-    container.innerHTML = `
-      <div class="mb-4">
-        <button onclick="openProductForm()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-          ➕ Novo Produto
-        </button>
-      </div>
-      <div class="grid gap-4">
-        ${products.map(product => `
-          <div class="bg-gray-50 p-4 rounded-lg flex items-center gap-4">
-            <img src="${product.image}" alt="${product.name}" class="w-16 h-16 object-cover rounded" onerror="this.src='https://via.placeholder.com/64x64/6B7280/FFFFFF?text=📦'">
-            <div class="flex-1">
-              <h4 class="font-semibold">${product.name}</h4>
-              <p class="text-sm text-gray-600">${product.category} • R$ ${product.price.toFixed(2)}</p>
-              <p class="text-xs text-gray-500 line-clamp-1">${product.description}</p>
-            </div>
-            <button onclick="deleteProduct(${product.id})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
-              🗑️ Excluir
-            </button>
-          </div>
-        `).join('')}
-      </div>
-    `;
-  }
-
-  function deleteProduct(productId) {
-    if (confirm('Tem certeza que deseja excluir este produto?')) {
-      const index = products.findIndex(p => p.id === productId);
-      if (index > -1) {
-        products.splice(index, 1);
-        
-        // Remove from cart if exists
-        cartItems = cartItems.filter(item => item.productId !== productId);
-        
-        saveToStorage();
-        renderProductsGrid();
-        renderAdminProducts();
-        updateProductsCount();
-        updateCartCount();
-        
-        alert('✅ Produto excluído com sucesso!');
-      }
-    }
-  }
-
-  // Sales functions
+  // Sales
   function renderSales() {
-    const container = document.getElementById('sales-list');
-    
+    const list = document.getElementById('sales-list');
     if (sales.length === 0) {
-      container.innerHTML = `
-        <div class="text-center py-8">
-          <p class="text-gray-500 text-lg">Nenhuma venda realizada ainda</p>
-        </div>
-      `;
+      list.innerHTML = '<div class="text-center text-gray-500 py-8">Nenhuma venda realizada ainda.</div>';
       return;
     }
-
-    const totalRevenue = sales.reduce((sum, sale) => sum + sale.total, 0);
-
-    container.innerHTML = `
-      <div class="mb-6 bg-green-50 p-4 rounded-lg border border-green-200">
-        <h3 class="text-lg font-bold text-green-800">📊 Resumo de Vendas</h3>
-        <p class="text-green-600">Total de vendas: ${sales.length}</p>
-        <p class="text-green-600 font-bold text-xl">Receita total: R$ ${totalRevenue.toFixed(2)}</p>
-      </div>
-      
-      <div class="space-y-4">
-        ${sales.map(sale => `
-          <div class="bg-white border rounded-lg p-4">
-            <div class="flex justify-between items-start mb-3">
-              <div>
-                <h4 class="font-bold text-lg">${sale.id}</h4>
-                <p class="text-sm text-gray-600">${sale.date} às ${sale.time}</p>
-                <p class="text-sm"><strong>Cliente:</strong> ${sale.customer}</p>
-                <p class="text-sm"><strong>Email:</strong> ${sale.email}</p>
-              </div>
-              <div class="text-right">
-                <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">${sale.status}</span>
-                <p class="text-lg font-bold text-green-600 mt-1">R$ ${sale.total.toFixed(2)}</p>
-                <p class="text-xs text-gray-500">${sale.paymentMethod}</p>
-              </div>
-            </div>
-            
-            <div class="border-t pt-3">
-              <h5 class="font-semibold mb-2">Itens comprados:</h5>
-              <div class="space-y-1">
-                ${sale.items.map(item => `
-                  <div class="flex justify-between text-sm">
-                    <span>${item.quantity}x ${item.name}</span>
-                    <span>R$ ${item.subtotal.toFixed(2)}</span>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
+    
+    list.innerHTML = sales.map(sale => `
+      <div class="border rounded-lg p-4 mb-4">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <h4 class="font-bold">${sale.customer}</h4>
+            <p class="text-gray-600">${sale.email}</p>
+            <p class="text-sm text-gray-500">${sale.date}</p>
           </div>
-        `).join('')}
-      </div>
-    `;
-  }
-
-  // Generate PIX QR Code
-  function generatePixQRCode(amount) {
-    // Carregar biblioteca QR Code
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
-    script.onload = function() {
-      createPixQR(amount);
-    };
-    script.onerror = function() {
-      // Fallback para API externa
-      createQRWithAPI(amount);
-    };
-    document.head.appendChild(script);
-  }
-  
-  function createPixQR(amount) {
-    console.log('🎆 Gerando PIX DE PRODUÇÃO com valor:', amount);
-    
-    // Usar gerador de produção que funciona em bancos
-    const pixPayload = createRealPixPayload('98988804678', amount, 'LOJA DECASTRO');
-    
-    if (!pixPayload) {
-      console.error('❌ Erro ao gerar payload PIX');
-      createQRWithAPI(amount);
-      return;
-    }
-    
-    console.log('✅ PIX DE PRODUÇÃO Gerado:', pixPayload);
-    console.log('📏 Tamanho:', pixPayload.length, 'caracteres');
-    
-    const canvas = document.createElement('canvas');
-    QRCode.toCanvas(canvas, pixPayload, {
-      width: 200,
-      height: 200,
-      margin: 2,
-      color: {
-        dark: '#000000',
-        light: '#ffffff'
-      },
-      errorCorrectionLevel: 'M'
-    }, function(error) {
-      const container = document.getElementById('qr-code-container');
-      if (error) {
-        console.error('❌ Erro QR Code:', error);
-        createQRWithAPI(amount);
-      } else {
-        console.log('✅ QR Code PIX DE PRODUÇÃO gerado!');
-        if (container) {
-          container.innerHTML = '';
-          container.appendChild(canvas);
-          
-          const text = document.createElement('p');
-          text.className = 'text-xs text-green-600 mt-2 font-bold';
-          text.textContent = '🏦 PIX REAL - Testado em Bancos!';
-          container.appendChild(text);
-        }
-      }
-    });
-  }
-  
-  function createQRWithAPI(amount) {
-    const container = document.getElementById('qr-code-container');
-    if (!container) return;
-    
-    console.log('🔄 Usando API externa para PIX...');
-    
-    // Gerar payload de produção
-    const pixPayload = createRealPixPayload('98988804678', amount, 'LOJA DECASTRO');
-    
-    if (!pixPayload) {
-      console.error('❌ Falha ao gerar payload');
-      return;
-    }
-    
-    console.log('🌐 Payload REAL para API:', pixPayload);
-    
-    // Tentar API externa
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&ecc=M&data=${encodeURIComponent(pixPayload)}`;
-    
-    const img = document.createElement('img');
-    img.src = qrUrl;
-    img.className = 'w-48 h-48 border border-green-300 rounded';
-    
-    img.onload = function() {
-      container.innerHTML = '';
-      container.appendChild(img);
-      
-      const text = document.createElement('p');
-      text.className = 'text-xs text-green-600 mt-2 font-bold';
-      text.textContent = '🌐 PIX via API Externa';
-      container.appendChild(text);
-      
-      console.log('✅ QR Code criado via API!');
-    };
-    
-    img.onerror = function() {
-      console.log('❌ API falhou, mostrando PIX manual');
-      container.innerHTML = `
-        <div class="text-center p-4">
-          <div class="w-48 h-48 bg-green-100 border-2 border-dashed border-green-400 rounded-lg flex flex-col items-center justify-center">
-            <div class="text-6xl mb-3">📱</div>
-            <p class="text-green-700 font-bold text-lg">USE SUA CHAVE PIX</p>
-            <p class="text-green-600 font-bold text-xl">R$ ${amount.toFixed(2)}</p>
-            <div class="mt-3 p-3 bg-white border-2 border-green-500 rounded w-full">
-              <p class="text-sm font-bold text-green-700">Chave PIX:</p>
-              <p class="text-xl font-mono font-bold text-green-800">+55 98 98880-4678</p>
-            </div>
+          <div class="text-right">
+            <p class="font-bold text-green-600 text-lg">R$ ${sale.total.toFixed(2)}</p>
+            <p class="text-sm text-gray-500">${sale.method}</p>
           </div>
         </div>
-      `;
+        <div class="border-t pt-2">
+          <p class="text-sm font-medium mb-1">Itens:</p>
+          ${sale.items.map(item => `
+            <p class="text-sm text-gray-600">${item.quantity}x ${item.name} - R$ ${(item.price * item.quantity).toFixed(2)}</p>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Settings
+  function openSettingsModal() {
+    const settings = JSON.parse(localStorage.getItem('decastro-settings') || '{}');
+    document.getElementById('store-name').value = settings.storeName || 'Loja DeCastro';
+    document.getElementById('pix-key').value = settings.pixKey || '98988804678';
+    document.getElementById('contact-email').value = settings.contactEmail || 'contato@decastro.com.br';
+    document.getElementById('settings-modal').classList.remove('hidden');
+  }
+
+  function closeSettingsModal() {
+    document.getElementById('settings-modal').classList.add('hidden');
+  }
+
+  function saveSettings() {
+    const settings = {
+      storeName: document.getElementById('store-name').value,
+      pixKey: document.getElementById('pix-key').value,
+      contactEmail: document.getElementById('contact-email').value
     };
-  }
-  
-  // PIX SIMPLES QUE FUNCIONA - Gerador testado
-  function createRealPixPayload(pixKey, amount, merchantName) {
-    console.log('🔥 Criando PIX simples que funciona:', amount);
-    
-    const chave = '98988804678';
-    const valor = parseFloat(amount).toFixed(2);
-    const nome = 'DECASTRO';
-    const cidade = 'SAOLUIS';
-    
-    // Montar payload EMV de forma simples
-    let payload = '';
-    
-    // Formato EMV padrão
-    payload += '000201';  // Payload format
-    payload += '010212';  // Point of initiation
-    
-    // Campo 26 - Merchant Account
-    const gui = 'BR.GOV.BCB.PIX';
-    const keyField = chave;
-    const merchantInfo = '00' + gui.length.toString().padStart(2, '0') + gui +
-                        '01' + keyField.length.toString().padStart(2, '0') + keyField;
-    payload += '26' + merchantInfo.length.toString().padStart(2, '0') + merchantInfo;
-    
-    payload += '52040000';  // Category
-    payload += '5303986';   // Currency BRL
-    
-    // Valor
-    if (valor && valor !== '0.00') {
-      payload += '54' + valor.length.toString().padStart(2, '0') + valor;
-    }
-    
-    payload += '5802BR';  // Country
-    payload += '59' + nome.length.toString().padStart(2, '0') + nome;  // Name
-    payload += '60' + cidade.length.toString().padStart(2, '0') + cidade;  // City
-    
-    // TxID opcional
-    const txid = 'LOJA' + Math.random().toString().substring(2, 8);
-    const addData = '05' + txid.length.toString().padStart(2, '0') + txid;
-    payload += '62' + addData.length.toString().padStart(2, '0') + addData;
-    
-    // CRC
-    payload += '6304';
-    
-    // Calcular CRC16
-    const crc = calcularCRCSimples(payload);
-    const pixFinal = payload.slice(0, -4) + crc;
-    
-    console.log('✅ PIX Final:', pixFinal);
-    console.log('📊 Tamanho:', pixFinal.length);
-    
-    return pixFinal;
-  }
-  
-  // Formatar campo PIX corretamente
-  function formatPixField(id, value) {
-    const length = value.length.toString().padStart(2, '0');
-    return id + length + value;
-  }
-  
-
-  
-  // CRC16 Simples para PIX
-  function calcularCRCSimples(data) {
-    let crc = 0xFFFF;
-    
-    for (let i = 0; i < data.length; i++) {
-      crc ^= (data.charCodeAt(i) << 8);
-      
-      for (let j = 0; j < 8; j++) {
-        if (crc & 0x8000) {
-          crc = (crc << 1) ^ 0x1021;
-        } else {
-          crc = crc << 1;
-        }
-      }
-    }
-    
-    crc &= 0xFFFF;
-    const resultado = crc.toString(16).toUpperCase().padStart(4, '0');
-    console.log('🔐 CRC calculado:', resultado);
-    return resultado;
+    localStorage.setItem('decastro-settings', JSON.stringify(settings));
+    alert('✅ Configurações salvas!');
+    closeSettingsModal();
   }
 
-  // Make functions global
-  window.switchTab = switchTab;
-  window.openProductForm = openProductForm;
-  window.closeProductModal = closeProductModal;
-  window.addToCart = addToCart;
-  // Função de processamento de cartão
-  function processarCartao(name, email, total) {
-    // Validar formulário
-    const form = document.getElementById('card-form');
-    if (!form.checkValidity()) {
-      alert('⚠️ Por favor, preencha todos os campos do cartão.');
-      return;
-    }
+  // Credentials
+  function openCredentialsModal() {
+    const credentials = JSON.parse(localStorage.getItem('decastro-credentials') || '{}');
+    document.getElementById('mp-access-token').value = credentials.accessToken || '';
+    document.getElementById('mp-public-key').value = credentials.publicKey || '';
+    document.getElementById('credentials-modal').classList.remove('hidden');
+  }
+
+  function closeCredentialsModal() {
+    document.getElementById('credentials-modal').classList.add('hidden');
+  }
+
+  function saveCredentials() {
+    const credentials = {
+      accessToken: document.getElementById('mp-access-token').value,
+      publicKey: document.getElementById('mp-public-key').value
+    };
+    localStorage.setItem('decastro-credentials', JSON.stringify(credentials));
+    alert('🔐 Credenciais do Mercado Pago salvas com segurança!');
+    closeCredentialsModal();
+  }
+
+  // Storage
+  function saveProducts() {
+    localStorage.setItem('decastro-products', JSON.stringify(products));
+  }
+
+  function saveCart() {
+    localStorage.setItem('decastro-cart', JSON.stringify(cartItems));
+  }
+
+  function saveSales() {
+    localStorage.setItem('decastro-sales', JSON.stringify(sales));
+  }
+
+  function loadData() {
+    const savedProducts = localStorage.getItem('decastro-products');
+    if (savedProducts) products = JSON.parse(savedProducts);
     
-    const btn = document.getElementById('btn-cartao');
-    btn.disabled = true;
-    btn.innerHTML = '🔄 Processando...';
+    const savedCart = localStorage.getItem('decastro-cart');
+    if (savedCart) cartItems = JSON.parse(savedCart);
     
-    // Simular processamento (2-4 segundos)
-    const tempo = Math.random() * 2000 + 2000;
-    
-    setTimeout(() => {
-      // Simular sucesso (95% de chance)
-      if (Math.random() < 0.95) {
-        const transacao = 'CC' + Math.random().toString().substring(2, 12).toUpperCase();
-        alert('✅ Pagamento Aprovado!\n\n' +
-              'Transação: ' + transacao + '\n' +
-              'Valor: R$ ' + total.toFixed(2) + '\n' +
-              'Status: Aprovado');
-        completePurchase(name, email, total, 'Cartão de Crédito');
-      } else {
-        // Simular recusa
-        btn.disabled = false;
-        btn.innerHTML = '💳 Processar Pagamento';
-        alert('❌ Pagamento Recusado\n\nMotivo: Dados inválidos ou limite insuficiente\nTente novamente ou use PIX');
-      }
-    }, tempo);
+    const savedSales = localStorage.getItem('decastro-sales');
+    if (savedSales) sales = JSON.parse(savedSales);
   }
-  
-  // Expor funções globalmente
-  window.switchTab = switchTab;
-  window.openProductForm = openProductForm;
-  window.closeProductModal = closeProductModal;
-  window.addProduct = addProduct;
-  window.addToCart = addToCart;
-  window.removeFromCart = removeFromCart;
-  window.updateQuantity = updateQuantity;
-  window.openCheckout = openCheckout;
-  window.closePaymentModal = closePaymentModal;
-  window.processPayment = processPayment;
-  window.copyPixKey = copyPixKey;
-  window.simulatePixPayment = simulatePixPayment;
-  window.formatCardNumber = formatCardNumber;
-  window.formatExpiry = formatExpiry;
-  window.processarCartao = processarCartao;
-  window.deleteProduct = deleteProduct;
-  window.generatePixQRCode = generatePixQRCode;
-  window.copyPixPayload = copyPixPayload;
-  window.createPixQR = createPixQR;
-  window.showPixPayment = showPixPayment;
-  window.showCardPayment = showCardPayment;
-  window.completePurchase = completePurchase;
-  
-  // Funções de inicialização
-  function loadCartFromStorage() {
-    const saved = localStorage.getItem('decastro-cart');
-    if (saved) {
-      cartItems = JSON.parse(saved);
-    }
-  }
-  
-  function loadProductsFromStorage() {
-    const saved = localStorage.getItem('decastro-products');
-    if (saved) {
-      products = JSON.parse(saved);
-    }
-  }
-  
-  function updateCartCounter() {
-    const count = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    document.getElementById('cart-count').textContent = count;
-  }
-  
-  function updateProductsCounter() {
+
+  function updateCounters() {
+    const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    document.getElementById('cart-count').textContent = cartCount;
     document.getElementById('products-count').textContent = products.length;
-  }
-  
-  function updateSalesCounter() {
-    const saved = localStorage.getItem('decastro-sales');
-    const sales = saved ? JSON.parse(saved) : [];
     document.getElementById('sales-count').textContent = sales.length;
   }
-  
-  // Inicializar loja ao carregar
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Loja DeCastro inicializada!');
-    
-    // Carregar dados do localStorage
-    loadCartFromStorage();
-    loadProductsFromStorage();
-    
-    // Renderizar produtos iniciais
-    renderProductGrid();
-    
-    // Atualizar contadores
-    updateCartCounter();
-    updateProductsCounter();
-    updateSalesCounter();
-    
-    // Ativar primeira aba
-    switchTab('loja');
-    
-    console.log('✅ Loja totalmente funcional!');
-  });
 
+  // Event listeners
+  document.getElementById('product-form').addEventListener('submit', addProduct);
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', function() {
+    loadData();
+    updateCounters();
+    switchTab('loja');
+    lucide.createIcons();
+    
+    console.log('🏪 Loja DeCastro inicializada com sucesso!');
+  });
 </script>
 
 </body>
