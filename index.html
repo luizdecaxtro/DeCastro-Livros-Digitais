@@ -1357,6 +1357,11 @@
   }
   
   // Expor funções globalmente
+  window.switchTab = switchTab;
+  window.openProductForm = openProductForm;
+  window.closeProductModal = closeProductModal;
+  window.addProduct = addProduct;
+  window.addToCart = addToCart;
   window.removeFromCart = removeFromCart;
   window.updateQuantity = updateQuantity;
   window.openCheckout = openCheckout;
@@ -1370,6 +1375,62 @@
   window.deleteProduct = deleteProduct;
   window.generatePixQRCode = generatePixQRCode;
   window.copyPixPayload = copyPixPayload;
+  window.createPixQR = createPixQR;
+  window.showPixPayment = showPixPayment;
+  window.showCardPayment = showCardPayment;
+  window.completePurchase = completePurchase;
+  
+  // Funções de inicialização
+  function loadCartFromStorage() {
+    const saved = localStorage.getItem('decastro-cart');
+    if (saved) {
+      cartItems = JSON.parse(saved);
+    }
+  }
+  
+  function loadProductsFromStorage() {
+    const saved = localStorage.getItem('decastro-products');
+    if (saved) {
+      products = JSON.parse(saved);
+    }
+  }
+  
+  function updateCartCounter() {
+    const count = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    document.getElementById('cart-count').textContent = count;
+  }
+  
+  function updateProductsCounter() {
+    document.getElementById('products-count').textContent = products.length;
+  }
+  
+  function updateSalesCounter() {
+    const saved = localStorage.getItem('decastro-sales');
+    const sales = saved ? JSON.parse(saved) : [];
+    document.getElementById('sales-count').textContent = sales.length;
+  }
+  
+  // Inicializar loja ao carregar
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Loja DeCastro inicializada!');
+    
+    // Carregar dados do localStorage
+    loadCartFromStorage();
+    loadProductsFromStorage();
+    
+    // Renderizar produtos iniciais
+    renderProductGrid();
+    
+    // Atualizar contadores
+    updateCartCounter();
+    updateProductsCounter();
+    updateSalesCounter();
+    
+    // Ativar primeira aba
+    switchTab('loja');
+    
+    console.log('✅ Loja totalmente funcional!');
+  });
 
 </script>
 
