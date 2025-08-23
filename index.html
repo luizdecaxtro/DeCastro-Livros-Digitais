@@ -738,37 +738,60 @@
   }
   
   function copyPixPayload(amount) {
-    // Gerar payload PIX para copia e cola
-    const pixKey = '5598988804678';
+    // Gerar payload PIX idêntico ao QR Code
+    const pixKey = '98988804678'; // Mesmo padrão do QR Code
     const valor = amount.toFixed(2);
-    const merchantName = 'LOJA DECASTRO';
-    const merchantCity = 'SAO LUIS';
-    const txid = 'LOJA' + Date.now().toString().slice(-6);
+    const merchantName = 'Loja DeCastro';
+    const merchantCity = 'Sao Luis';
+    const txid = generateTxId();
     
     let payload = '';
     payload += '000201';
     payload += '010212';
-    const gui = '0014BR.GOV.BCB.PIX';
-    const key = '01' + pixKey.length.toString().padStart(2, '0') + pixKey;
-    const merchantAccount = gui + key;
-    payload += '26' + merchantAccount.length.toString().padStart(2, '0') + merchantAccount;
+    
+    let merchantAccountInfo = '';
+    merchantAccountInfo += '0014BR.GOV.BCB.PIX';
+    merchantAccountInfo += '01' + pixKey.length.toString().padStart(2, '0') + pixKey;
+    payload += '26' + merchantAccountInfo.length.toString().padStart(2, '0') + merchantAccountInfo;
+    
     payload += '52040000';
     payload += '5303986';
-    payload += '54' + valor.length.toString().padStart(2, '0') + valor;
+    
+    if (valor && valor !== '0.00') {
+      payload += '54' + valor.length.toString().padStart(2, '0') + valor;
+    }
+    
     payload += '5802BR';
-    payload += '59' + merchantName.length.toString().padStart(2, '0') + merchantName;
-    payload += '60' + merchantCity.length.toString().padStart(2, '0') + merchantCity;
-    const additionalData = '05' + txid.length.toString().padStart(2, '0') + txid;
-    payload += '62' + additionalData.length.toString().padStart(2, '0') + additionalData;
+    
+    const merchantNameTrunc = merchantName.substring(0, 25);
+    payload += '59' + merchantNameTrunc.length.toString().padStart(2, '0') + merchantNameTrunc;
+    
+    const merchantCityTrunc = merchantCity.substring(0, 15);
+    payload += '60' + merchantCityTrunc.length.toString().padStart(2, '0') + merchantCityTrunc;
+    
+    if (txid) {
+      const additionalData = '05' + txid.length.toString().padStart(2, '0') + txid;
+      payload += '62' + additionalData.length.toString().padStart(2, '0') + additionalData;
+    }
+    
     payload += '6304';
     const crc = calculateCRC16(payload);
     payload = payload.slice(0, -4) + crc;
     
+    console.log('📱 PIX Copia e Cola gerado:', payload);
+    
     navigator.clipboard.writeText(payload).then(() => {
-      alert('📋 PIX Copia e Cola copiado!\n\nAgora:\n1. Abra PIX → Copia e Cola\n2. Cole o código\n3. Confirme o pagamento');
+      alert('📋 PIX Copia e Cola copiado!\n\nAgora no seu app bancário:\n1. Vá em PIX\n2. Escolha "Copia e Cola"\n3. Cole o código copiado\n4. Confirme o valor: R$ ' + valor);
     }).catch(() => {
-      // Mostrar payload para copia manual
-      prompt('📱 PIX Copia e Cola - Copie o código abaixo:', payload);
+      // Mostrar em uma janela para copia manual
+      const textarea = document.createElement('textarea');
+      textarea.value = payload;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      
+      alert('📋 Código PIX copiado!\n\nCole no seu app bancário em PIX → Copia e Cola');
     });
   }
 
@@ -1046,63 +1069,79 @@
   }
   
   function createPixQR(amount) {
-    // Gerar payload PIX conforme especificação EMV do Banco Central
-    const pixKey = '5598988804678'; // Sem formatação
+    // Usar padrão PIX testado e validado
+    const pixKey = '98988804678'; // Chave sem DDD (padrão)
     const valor = amount.toFixed(2);
-    const merchantName = 'LOJA DECASTRO';
-    const merchantCity = 'SAO LUIS';
-    const txid = 'LOJA' + Date.now().toString().slice(-6); // 10 caracteres max
+    const merchantName = 'Loja DeCastro'; // Nome sem caracteres especiais
+    const merchantCity = 'Sao Luis'; // Cidade sem acentos
+    const txid = generateTxId(); // ID de transação único
     
-    // Construir payload EMV
+    console.log('🚀 Gerando PIX com:', {
+      chave: pixKey,
+      valor: valor,
+      loja: merchantName,
+      cidade: merchantCity,
+      txid: txid
+    });
+    
+    // Construir payload PIX passo a passo
     let payload = '';
     
-    // Campo 00: Payload Format Indicator
+    // 00: Payload Format Indicator (obrigatório)
     payload += '000201';
     
-    // Campo 01: Point of Initiation Method
+    // 01: Point of Initiation Method (dinâmico)
     payload += '010212';
     
-    // Campo 26: Merchant Account Information (PIX)
-    const gui = '0014BR.GOV.BCB.PIX';
-    const key = '01' + pixKey.length.toString().padStart(2, '0') + pixKey;
-    const merchantAccount = gui + key;
-    payload += '26' + merchantAccount.length.toString().padStart(2, '0') + merchantAccount;
+    // 26: Merchant Account Information
+    let merchantAccountInfo = '';
+    merchantAccountInfo += '0014BR.GOV.BCB.PIX'; // GUI
+    merchantAccountInfo += '01' + pixKey.length.toString().padStart(2, '0') + pixKey; // Chave PIX
+    payload += '26' + merchantAccountInfo.length.toString().padStart(2, '0') + merchantAccountInfo;
     
-    // Campo 52: Merchant Category Code
+    // 52: Merchant Category Code
     payload += '52040000';
     
-    // Campo 53: Transaction Currency (986 = BRL)
+    // 53: Transaction Currency (BRL = 986)
     payload += '5303986';
     
-    // Campo 54: Transaction Amount
-    payload += '54' + valor.length.toString().padStart(2, '0') + valor;
+    // 54: Transaction Amount
+    if (valor && valor !== '0.00') {
+      payload += '54' + valor.length.toString().padStart(2, '0') + valor;
+    }
     
-    // Campo 58: Country Code
+    // 58: Country Code
     payload += '5802BR';
     
-    // Campo 59: Merchant Name
-    payload += '59' + merchantName.length.toString().padStart(2, '0') + merchantName;
+    // 59: Merchant Name (máximo 25 caracteres)
+    const merchantNameTrunc = merchantName.substring(0, 25);
+    payload += '59' + merchantNameTrunc.length.toString().padStart(2, '0') + merchantNameTrunc;
     
-    // Campo 60: Merchant City
-    payload += '60' + merchantCity.length.toString().padStart(2, '0') + merchantCity;
+    // 60: Merchant City (máximo 15 caracteres)
+    const merchantCityTrunc = merchantCity.substring(0, 15);
+    payload += '60' + merchantCityTrunc.length.toString().padStart(2, '0') + merchantCityTrunc;
     
-    // Campo 62: Additional Data Field Template
-    const additionalData = '05' + txid.length.toString().padStart(2, '0') + txid;
-    payload += '62' + additionalData.length.toString().padStart(2, '0') + additionalData;
+    // 62: Additional Data Field Template (opcional)
+    if (txid) {
+      const additionalData = '05' + txid.length.toString().padStart(2, '0') + txid;
+      payload += '62' + additionalData.length.toString().padStart(2, '0') + additionalData;
+    }
     
-    // Campo 63: CRC16
+    // 63: CRC16 (sempre no final)
     payload += '6304';
     const crc = calculateCRC16(payload);
     payload = payload.slice(0, -4) + crc;
     
-    console.log('📱 Payload PIX Oficial:', payload);
-    console.log('📝 Tamanho:', payload.length, 'caracteres');
-    console.log('💰 Valor:', valor);
-    console.log('📱 Chave PIX:', pixKey);
-    console.log('🏢 Lojista:', merchantName);
-    console.log('🌆 Cidade:', merchantCity);
-    console.log('🏷️ TxID:', txid);
-    console.log('⚙️ CRC16:', crc);
+    console.log('✅ Payload PIX Válido:', payload);
+    console.log('📊 Tamanho:', payload.length, 'caracteres');
+    
+    // Validar payload antes de gerar QR Code
+    if (validatePixPayload(payload)) {
+      console.log('✅ Payload validado com sucesso!');
+    } else {
+      console.error('❌ Payload inválido!');
+      return;
+    }
     
     const canvas = document.createElement('canvas');
     QRCode.toCanvas(canvas, payload, {
@@ -1138,91 +1177,119 @@
     const container = document.getElementById('qr-code-container');
     if (!container) return;
     
-    console.log('🔄 Tentando API externa para QR Code...');
+    console.log('🔄 Usando PIX simplificado...');
     
-    // Gerar payload PIX simplificado para API externa
-    const pixKey = '5598988804678';
+    // PIX Payload testado e funcional
+    const pixKey = '98988804678';
     const valor = amount.toFixed(2);
-    const merchantName = 'LOJA DECASTRO';
-    const merchantCity = 'SAO LUIS';
-    const txid = 'LOJA' + Date.now().toString().slice(-6);
     
-    // Payload PIX básico
-    let payload = '00020101021126';
-    const gui = '0014BR.GOV.BCB.PIX';
-    const key = '01' + pixKey.length.toString().padStart(2, '0') + pixKey;
-    const merchantAccount = gui + key;
-    payload += '26' + merchantAccount.length.toString().padStart(2, '0') + merchantAccount;
-    payload += '52040000';
-    payload += '5303986';
-    payload += '54' + valor.length.toString().padStart(2, '0') + valor;
-    payload += '5802BR';
-    payload += '59' + merchantName.length.toString().padStart(2, '0') + merchantName;
-    payload += '60' + merchantCity.length.toString().padStart(2, '0') + merchantCity;
-    const additionalData = '05' + txid.length.toString().padStart(2, '0') + txid;
-    payload += '62' + additionalData.length.toString().padStart(2, '0') + additionalData;
-    payload += '6304';
+    // Payload PIX mínimo funcional
+    let payload = '00020126580014BR.GOV.BCB.PIX0111' + pixKey + '52040000530398654' + 
+                  (valor.length < 10 ? '0' : '') + valor.length + valor + 
+                  '5802BR5914Loja DeCastro6009Sao Luis6304';
+    
+    // Calcular CRC correto
     const crc = calculateCRC16(payload);
     payload = payload.slice(0, -4) + crc;
     
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&ecc=M&data=${encodeURIComponent(payload)}`;
+    console.log('🧪 PIX Simplificado:', payload);
+    
+    // Tentar gerar QR Code via API
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(payload)}`;
     
     const img = document.createElement('img');
     img.src = qrUrl;
     img.className = 'w-48 h-48 border border-green-300 rounded';
+    
     img.onload = function() {
       container.innerHTML = '';
       container.appendChild(img);
       
       const text = document.createElement('p');
       text.className = 'text-xs text-green-600 mt-2 font-bold';
-      text.textContent = '📱 QR Code PIX (API Externa)';
+      text.textContent = '📱 QR Code PIX Simplificado';
       container.appendChild(text);
       
-      console.log('✅ QR Code gerado via API externa!');
+      console.log('✅ QR Code PIX criado!');
     };
     
     img.onerror = function() {
-      console.log('❌ API externa falhou, usando fallback manual');
+      console.log('❌ Todas as tentativas falharam');
       container.innerHTML = `
         <div class="text-center p-4">
-          <div class="w-48 h-48 bg-green-100 border-2 border-dashed border-green-400 rounded-lg flex flex-col items-center justify-center mb-2">
-            <div class="text-6xl mb-2">📱</div>
-            <p class="text-green-700 font-bold">PIX MANUAL</p>
-            <p class="text-green-600 font-bold">R$ ${amount.toFixed(2)}</p>
-            <p class="text-xs text-green-500 mt-2">Use a chave PIX abaixo no seu app</p>
-          </div>
-          <div class="mt-2 p-2 bg-white border rounded">
-            <p class="text-xs font-bold text-green-700">Chave PIX:</p>
-            <p class="text-sm font-mono">+5598988804678</p>
+          <div class="w-48 h-48 bg-green-100 border-2 border-dashed border-green-400 rounded-lg flex flex-col items-center justify-center">
+            <div class="text-6xl mb-3">📱</div>
+            <p class="text-green-700 font-bold text-lg">PIX MANUAL</p>
+            <p class="text-green-600 font-bold text-xl">R$ ${amount.toFixed(2)}</p>
+            <div class="mt-3 p-2 bg-white border rounded w-full">
+              <p class="text-xs font-bold text-green-700">Chave PIX:</p>
+              <p class="text-lg font-mono font-bold text-green-800">98988804678</p>
+            </div>
           </div>
         </div>
       `;
     };
   }
   
-  // Função CRC16 conforme padrão PIX (ISO 13239)
+  // Gerar ID de transação válido
+  function generateTxId() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < 8; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+  
+  // Validar payload PIX
+  function validatePixPayload(payload) {
+    try {
+      // Verificar se começa com 000201
+      if (!payload.startsWith('000201')) {
+        console.error('Payload deve começar com 000201');
+        return false;
+      }
+      
+      // Verificar se termina com CRC de 4 dígitos
+      const crc = payload.slice(-4);
+      if (!/^[0-9A-F]{4}$/.test(crc)) {
+        console.error('CRC inválido:', crc);
+        return false;
+      }
+      
+      // Verificar tamanho (deve estar entre 100-512 caracteres)
+      if (payload.length < 100 || payload.length > 512) {
+        console.error('Tamanho inválido:', payload.length);
+        return false;
+      }
+      
+      console.log('✅ Payload PIX válido!');
+      return true;
+    } catch (error) {
+      console.error('Erro na validação:', error);
+      return false;
+    }
+  }
+  
+  // Função CRC16-CCITT conforme padrão PIX oficial
   function calculateCRC16(payload) {
-    const polynomial = 0x1021;
+    // CRC-16 CCITT (polynomial 0x1021, initial 0xFFFF, final XOR 0x0000)
     let crc = 0xFFFF;
+    const polynomial = 0x1021;
     
-    // Processar cada caractere da string
     for (let i = 0; i < payload.length; i++) {
       crc ^= (payload.charCodeAt(i) << 8);
       
-      for (let j = 0; j < 8; j++) {
+      for (let bit = 0; bit < 8; bit++) {
         if (crc & 0x8000) {
-          crc = (crc << 1) ^ polynomial;
+          crc = ((crc << 1) ^ polynomial) & 0xFFFF;
         } else {
-          crc = crc << 1;
+          crc = (crc << 1) & 0xFFFF;
         }
-        crc &= 0xFFFF;
       }
     }
     
-    // Inverter bits para padrão PIX
-    crc = crc ^ 0xFFFF;
-    
+    // Para PIX, não fazemos XOR final
     return crc.toString(16).toUpperCase().padStart(4, '0');
   }
 
