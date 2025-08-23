@@ -107,6 +107,9 @@
             <button onclick="openSettingsModal()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-2 text-sm font-medium">
               ⚙️ Configurações
             </button>
+            <button onclick="openCategoriesModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2 text-sm font-medium">
+              🏷️ Categorias
+            </button>
             <button onclick="openProductForm()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center gap-2">
               ➕ Novo Produto
             </button>
@@ -288,14 +291,31 @@
 
   <!-- Product Form Modal -->
   <div id="product-modal" class="fixed inset-0 bg-black bg-opacity-50 modal-overlay hidden z-50 flex items-center justify-center">
-    <div class="bg-white rounded-lg p-6 w-full max-w-md m-4 fade-in">
+    <div class="bg-white rounded-lg p-6 w-full max-w-lg m-4 fade-in">
       <h3 class="text-xl font-bold mb-4">Cadastrar Produto</h3>
       <form id="product-form" class="space-y-4">
         <input id="product-name" type="text" placeholder="Nome do produto" class="w-full border rounded-lg px-3 py-2" required>
         <input id="product-price" type="number" step="0.01" placeholder="Preço (R$)" class="w-full border rounded-lg px-3 py-2" required>
-        <input id="product-category" type="text" placeholder="Categoria" class="w-full border rounded-lg px-3 py-2" required>
+        <select id="product-category" class="w-full border rounded-lg px-3 py-2" required>
+          <option value="">Selecione uma categoria</option>
+        </select>
         <textarea id="product-description" placeholder="Descrição" rows="3" class="w-full border rounded-lg px-3 py-2" required></textarea>
-        <input id="product-image" type="url" placeholder="URL da imagem" class="w-full border rounded-lg px-3 py-2">
+        
+        <!-- Image Upload Section -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium">Imagem do Produto</label>
+          <div class="flex gap-2">
+            <input id="product-image-file" type="file" accept="image/*" class="flex-1 border rounded-lg px-3 py-2 text-sm" onchange="handleImageUpload()">
+            <button type="button" onclick="clearImage()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 text-sm">
+              Limpar
+            </button>
+          </div>
+          <div id="image-preview" class="hidden mt-2">
+            <img id="preview-img" class="w-32 h-32 object-cover rounded-lg border" alt="Preview">
+          </div>
+          <p class="text-xs text-gray-500">Formatos: JPG, PNG, GIF (máx. 2MB)</p>
+        </div>
+        
         <div class="flex gap-2 mt-6">
           <button type="button" onclick="closeProductModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
             Cancelar
@@ -305,6 +325,40 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Categories Modal -->
+  <div id="categories-modal" class="fixed inset-0 bg-black bg-opacity-50 modal-overlay hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md m-4 fade-in">
+      <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <i data-lucide="tag" class="w-5 h-5"></i>
+        Gerenciar Categorias
+      </h3>
+      
+      <!-- Add Category -->
+      <div class="mb-4">
+        <div class="flex gap-2">
+          <input id="new-category" type="text" placeholder="Nova categoria" class="flex-1 border rounded-lg px-3 py-2">
+          <button onclick="addCategory()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+            ➕ Adicionar
+          </button>
+        </div>
+      </div>
+      
+      <!-- Categories List -->
+      <div class="max-h-60 overflow-y-auto">
+        <h4 class="font-semibold mb-2">Categorias Existentes:</h4>
+        <div id="categories-list" class="space-y-2">
+          <!-- Categories rendered here -->
+        </div>
+      </div>
+      
+      <div class="flex gap-2 mt-6">
+        <button onclick="closeCategoriesModal()" class="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">
+          Fechar
+        </button>
+      </div>
     </div>
   </div>
 
@@ -462,10 +516,12 @@
     }
   ];
   
+  let categories = ['Programação', 'Negócios', 'Design', 'Marketing', 'Educação'];
   let cartItems = [];
   let currentTab = 'loja';
   let sales = [];
   let mp = null;
+  let currentProductImage = null;
 
   // Tab navigation
   function switchTab(tab) {
@@ -503,6 +559,98 @@
     
     // Initialize Lucide icons
     lucide.createIcons();
+  }
+
+  // Categories management
+  function openCategoriesModal() {
+    renderCategories();
+    document.getElementById('categories-modal').classList.remove('hidden');
+    lucide.createIcons();
+  }
+
+  function closeCategoriesModal() {
+    document.getElementById('categories-modal').classList.add('hidden');
+    document.getElementById('new-category').value = '';
+  }
+
+  function addCategory() {
+    const newCategoryInput = document.getElementById('new-category');
+    const categoryName = newCategoryInput.value.trim();
+    
+    if (categoryName && !categories.includes(categoryName)) {
+      categories.push(categoryName);
+      renderCategories();
+      renderCategoryDropdown();
+      newCategoryInput.value = '';
+      saveToLocalStorage();
+    } else if (categories.includes(categoryName)) {
+      alert('Esta categoria já existe!');
+    }
+  }
+
+  function removeCategory(categoryName) {
+    if (confirm(`Deseja remover a categoria "${categoryName}"?\nProdutos nesta categoria ficarão sem categoria.`)) {
+      categories = categories.filter(cat => cat !== categoryName);
+      renderCategories();
+      renderCategoryDropdown();
+      saveToLocalStorage();
+    }
+  }
+
+  function renderCategories() {
+    const list = document.getElementById('categories-list');
+    if (categories.length === 0) {
+      list.innerHTML = '<p class="text-gray-500 text-sm">Nenhuma categoria criada ainda.</p>';
+      return;
+    }
+    
+    list.innerHTML = categories.map(category => `
+      <div class="flex justify-between items-center p-2 bg-gray-50 rounded border">
+        <span class="font-medium">${category}</span>
+        <button onclick="removeCategory('${category}')" class="text-red-600 hover:text-red-800 text-sm">
+          ✖ Remover
+        </button>
+      </div>
+    `).join('');
+  }
+
+  function renderCategoryDropdown() {
+    const select = document.getElementById('product-category');
+    if (select) {
+      select.innerHTML = '<option value="">Selecione uma categoria</option>' +
+        categories.map(category => `<option value="${category}">${category}</option>`).join('');
+    }
+  }
+
+  // Image upload functions
+  function handleImageUpload() {
+    const input = document.getElementById('product-image-file');
+    const file = input.files[0];
+    const preview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    
+    if (file) {
+      // Check file size (2MB limit)
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Arquivo muito grande! Tamanho máximo: 2MB');
+        input.value = '';
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentProductImage = e.target.result;
+        previewImg.src = currentProductImage;
+        preview.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function clearImage() {
+    document.getElementById('product-image-file').value = '';
+    document.getElementById('image-preview').classList.add('hidden');
+    currentProductImage = null;
   }
 
   // Product management
@@ -556,24 +704,33 @@
 
   // Product form
   function openProductForm() {
+    renderCategoryDropdown();
+    clearImage();
     document.getElementById('product-modal').classList.remove('hidden');
   }
 
   function closeProductModal() {
     document.getElementById('product-modal').classList.add('hidden');
     document.getElementById('product-form').reset();
+    clearImage();
   }
 
   function addProduct(event) {
     event.preventDefault();
     
+    const category = document.getElementById('product-category').value;
+    if (!category) {
+      alert('Por favor, selecione uma categoria!');
+      return;
+    }
+    
     const product = {
       id: Date.now(),
       name: document.getElementById('product-name').value,
       price: parseFloat(document.getElementById('product-price').value),
-      category: document.getElementById('product-category').value,
+      category: category,
       description: document.getElementById('product-description').value,
-      image: document.getElementById('product-image').value || 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop'
+      image: currentProductImage || 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=250&fit=crop'
     };
     
     products.push(product);
@@ -1037,6 +1194,10 @@
     localStorage.setItem('decastro-sales', JSON.stringify(sales));
   }
 
+  function saveToLocalStorage() {
+    localStorage.setItem('decastro-categories', JSON.stringify(categories));
+  }
+
   function loadData() {
     const savedProducts = localStorage.getItem('decastro-products');
     if (savedProducts) products = JSON.parse(savedProducts);
@@ -1046,6 +1207,9 @@
     
     const savedSales = localStorage.getItem('decastro-sales');
     if (savedSales) sales = JSON.parse(savedSales);
+    
+    const savedCategories = localStorage.getItem('decastro-categories');
+    if (savedCategories) categories = JSON.parse(savedCategories);
   }
 
   function updateCounters() {
@@ -1073,6 +1237,14 @@
 
   // Event listeners
   document.getElementById('product-form').addEventListener('submit', addProduct);
+  
+  // Add category with Enter key
+  document.addEventListener('keydown', function(e) {
+    if (e.target.id === 'new-category' && e.key === 'Enter') {
+      e.preventDefault();
+      addCategory();
+    }
+  });
 
   // Initialize
   document.addEventListener('DOMContentLoaded', function() {
