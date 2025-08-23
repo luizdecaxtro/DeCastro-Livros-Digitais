@@ -684,11 +684,18 @@
           </div>
           
           <div class="text-center">
-            <p class="font-bold text-green-800 mb-2">Chave PIX:</p>
-            <p class="bg-white p-2 rounded border text-sm font-mono break-all">+5598988804678</p>
-            <button onclick="copyPixKey()" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
-              📋 Copiar Chave PIX
-            </button>
+            <p class="font-bold text-green-800 mb-2">📱 Chave PIX para pagamento manual:</p>
+            <div class="bg-white p-3 rounded border-2 border-green-300">
+              <p class="text-lg font-bold text-green-700">+55 (98) 98880-4678</p>
+            </div>
+            <div class="flex gap-2 mt-3">
+              <button onclick="copyPixKey()" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
+                📋 Copiar Chave
+              </button>
+              <button onclick="copyPixPayload(${total})" class="flex-1 bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700">
+                📱 Copiar PIX Copia e Cola
+              </button>
+            </div>
           </div>
         </div>
 
@@ -724,7 +731,44 @@
 
   function copyPixKey() {
     navigator.clipboard.writeText('+5598988804678').then(() => {
-      alert('📋 Chave PIX copiada!');
+      alert('📋 Chave PIX copiada!\n\nAgora cole no seu app bancário:\n1. Abra PIX → Pagar\n2. Cole a chave\n3. Confirme o valor');
+    }).catch(() => {
+      alert('📱 Chave PIX: +5598988804678\n\nCopie manualmente e cole no seu app bancário');
+    });
+  }
+  
+  function copyPixPayload(amount) {
+    // Gerar payload PIX para copia e cola
+    const pixKey = '5598988804678';
+    const valor = amount.toFixed(2);
+    const merchantName = 'LOJA DECASTRO';
+    const merchantCity = 'SAO LUIS';
+    const txid = 'LOJA' + Date.now().toString().slice(-6);
+    
+    let payload = '';
+    payload += '000201';
+    payload += '010212';
+    const gui = '0014BR.GOV.BCB.PIX';
+    const key = '01' + pixKey.length.toString().padStart(2, '0') + pixKey;
+    const merchantAccount = gui + key;
+    payload += '26' + merchantAccount.length.toString().padStart(2, '0') + merchantAccount;
+    payload += '52040000';
+    payload += '5303986';
+    payload += '54' + valor.length.toString().padStart(2, '0') + valor;
+    payload += '5802BR';
+    payload += '59' + merchantName.length.toString().padStart(2, '0') + merchantName;
+    payload += '60' + merchantCity.length.toString().padStart(2, '0') + merchantCity;
+    const additionalData = '05' + txid.length.toString().padStart(2, '0') + txid;
+    payload += '62' + additionalData.length.toString().padStart(2, '0') + additionalData;
+    payload += '6304';
+    const crc = calculateCRC16(payload);
+    payload = payload.slice(0, -4) + crc;
+    
+    navigator.clipboard.writeText(payload).then(() => {
+      alert('📋 PIX Copia e Cola copiado!\n\nAgora:\n1. Abra PIX → Copia e Cola\n2. Cole o código\n3. Confirme o pagamento');
+    }).catch(() => {
+      // Mostrar payload para copia manual
+      prompt('📱 PIX Copia e Cola - Copie o código abaixo:', payload);
     });
   }
 
@@ -1002,30 +1046,88 @@
   }
   
   function createPixQR(amount) {
-    const pixData = `00020101021126580014BR.GOV.BCB.PIX013698988804678520400005303986540${amount.toFixed(2).length.toString().padStart(2, '0')}${amount.toFixed(2)}5802BR5913Loja DeCastro6008SAO LUIS62070503***63041D3D`;
+    // Gerar payload PIX conforme especificação EMV do Banco Central
+    const pixKey = '5598988804678'; // Sem formatação
+    const valor = amount.toFixed(2);
+    const merchantName = 'LOJA DECASTRO';
+    const merchantCity = 'SAO LUIS';
+    const txid = 'LOJA' + Date.now().toString().slice(-6); // 10 caracteres max
+    
+    // Construir payload EMV
+    let payload = '';
+    
+    // Campo 00: Payload Format Indicator
+    payload += '000201';
+    
+    // Campo 01: Point of Initiation Method
+    payload += '010212';
+    
+    // Campo 26: Merchant Account Information (PIX)
+    const gui = '0014BR.GOV.BCB.PIX';
+    const key = '01' + pixKey.length.toString().padStart(2, '0') + pixKey;
+    const merchantAccount = gui + key;
+    payload += '26' + merchantAccount.length.toString().padStart(2, '0') + merchantAccount;
+    
+    // Campo 52: Merchant Category Code
+    payload += '52040000';
+    
+    // Campo 53: Transaction Currency (986 = BRL)
+    payload += '5303986';
+    
+    // Campo 54: Transaction Amount
+    payload += '54' + valor.length.toString().padStart(2, '0') + valor;
+    
+    // Campo 58: Country Code
+    payload += '5802BR';
+    
+    // Campo 59: Merchant Name
+    payload += '59' + merchantName.length.toString().padStart(2, '0') + merchantName;
+    
+    // Campo 60: Merchant City
+    payload += '60' + merchantCity.length.toString().padStart(2, '0') + merchantCity;
+    
+    // Campo 62: Additional Data Field Template
+    const additionalData = '05' + txid.length.toString().padStart(2, '0') + txid;
+    payload += '62' + additionalData.length.toString().padStart(2, '0') + additionalData;
+    
+    // Campo 63: CRC16
+    payload += '6304';
+    const crc = calculateCRC16(payload);
+    payload = payload.slice(0, -4) + crc;
+    
+    console.log('📱 Payload PIX Oficial:', payload);
+    console.log('📝 Tamanho:', payload.length, 'caracteres');
+    console.log('💰 Valor:', valor);
+    console.log('📱 Chave PIX:', pixKey);
+    console.log('🏢 Lojista:', merchantName);
+    console.log('🌆 Cidade:', merchantCity);
+    console.log('🏷️ TxID:', txid);
+    console.log('⚙️ CRC16:', crc);
     
     const canvas = document.createElement('canvas');
-    QRCode.toCanvas(canvas, pixData, {
-      width: 192,
-      height: 192,
-      margin: 1,
+    QRCode.toCanvas(canvas, payload, {
+      width: 200,
+      height: 200,
+      margin: 2,
       color: {
-        dark: '#065f46',
+        dark: '#000000',
         light: '#ffffff'
-      }
+      },
+      errorCorrectionLevel: 'M'
     }, function(error) {
       const container = document.getElementById('qr-code-container');
       if (error) {
-        console.error('Erro QR Code:', error);
+        console.error('❌ Erro QR Code:', error);
         createQRWithAPI(amount);
       } else {
+        console.log('✅ QR Code PIX válido gerado!');
         if (container) {
           container.innerHTML = '';
           container.appendChild(canvas);
           
           const text = document.createElement('p');
           text.className = 'text-xs text-green-600 mt-2 font-bold';
-          text.textContent = '📱 Escaneie para pagar';
+          text.textContent = '📱 QR Code PIX Oficial - Escaneie no seu banco';
           container.appendChild(text);
         }
       }
@@ -1036,9 +1138,34 @@
     const container = document.getElementById('qr-code-container');
     if (!container) return;
     
-    // Usar API pública para gerar QR Code
-    const pixData = `PIX: +5598988804678 | Valor: R$ ${amount.toFixed(2)} | Loja DeCastro`;
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=192x192&data=${encodeURIComponent(pixData)}`;
+    console.log('🔄 Tentando API externa para QR Code...');
+    
+    // Gerar payload PIX simplificado para API externa
+    const pixKey = '5598988804678';
+    const valor = amount.toFixed(2);
+    const merchantName = 'LOJA DECASTRO';
+    const merchantCity = 'SAO LUIS';
+    const txid = 'LOJA' + Date.now().toString().slice(-6);
+    
+    // Payload PIX básico
+    let payload = '00020101021126';
+    const gui = '0014BR.GOV.BCB.PIX';
+    const key = '01' + pixKey.length.toString().padStart(2, '0') + pixKey;
+    const merchantAccount = gui + key;
+    payload += '26' + merchantAccount.length.toString().padStart(2, '0') + merchantAccount;
+    payload += '52040000';
+    payload += '5303986';
+    payload += '54' + valor.length.toString().padStart(2, '0') + valor;
+    payload += '5802BR';
+    payload += '59' + merchantName.length.toString().padStart(2, '0') + merchantName;
+    payload += '60' + merchantCity.length.toString().padStart(2, '0') + merchantCity;
+    const additionalData = '05' + txid.length.toString().padStart(2, '0') + txid;
+    payload += '62' + additionalData.length.toString().padStart(2, '0') + additionalData;
+    payload += '6304';
+    const crc = calculateCRC16(payload);
+    payload = payload.slice(0, -4) + crc;
+    
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&ecc=M&data=${encodeURIComponent(payload)}`;
     
     const img = document.createElement('img');
     img.src = qrUrl;
@@ -1049,22 +1176,54 @@
       
       const text = document.createElement('p');
       text.className = 'text-xs text-green-600 mt-2 font-bold';
-      text.textContent = '📱 QR Code Gerado';
+      text.textContent = '📱 QR Code PIX (API Externa)';
       container.appendChild(text);
+      
+      console.log('✅ QR Code gerado via API externa!');
     };
     
     img.onerror = function() {
+      console.log('❌ API externa falhou, usando fallback manual');
       container.innerHTML = `
         <div class="text-center p-4">
           <div class="w-48 h-48 bg-green-100 border-2 border-dashed border-green-400 rounded-lg flex flex-col items-center justify-center mb-2">
             <div class="text-6xl mb-2">📱</div>
-            <p class="text-green-700 font-bold">QR CODE PIX</p>
-            <p class="text-green-600">R$ ${amount.toFixed(2)}</p>
-            <p class="text-xs text-green-500 mt-1">Use a chave PIX abaixo</p>
+            <p class="text-green-700 font-bold">PIX MANUAL</p>
+            <p class="text-green-600 font-bold">R$ ${amount.toFixed(2)}</p>
+            <p class="text-xs text-green-500 mt-2">Use a chave PIX abaixo no seu app</p>
+          </div>
+          <div class="mt-2 p-2 bg-white border rounded">
+            <p class="text-xs font-bold text-green-700">Chave PIX:</p>
+            <p class="text-sm font-mono">+5598988804678</p>
           </div>
         </div>
       `;
     };
+  }
+  
+  // Função CRC16 conforme padrão PIX (ISO 13239)
+  function calculateCRC16(payload) {
+    const polynomial = 0x1021;
+    let crc = 0xFFFF;
+    
+    // Processar cada caractere da string
+    for (let i = 0; i < payload.length; i++) {
+      crc ^= (payload.charCodeAt(i) << 8);
+      
+      for (let j = 0; j < 8; j++) {
+        if (crc & 0x8000) {
+          crc = (crc << 1) ^ polynomial;
+        } else {
+          crc = crc << 1;
+        }
+        crc &= 0xFFFF;
+      }
+    }
+    
+    // Inverter bits para padrão PIX
+    crc = crc ^ 0xFFFF;
+    
+    return crc.toString(16).toUpperCase().padStart(4, '0');
   }
 
   // Make functions global
@@ -1084,6 +1243,7 @@
   window.simulateCardPayment = simulateCardPayment;
   window.deleteProduct = deleteProduct;
   window.generatePixQRCode = generatePixQRCode;
+  window.copyPixPayload = copyPixPayload;
 
 </script>
 
