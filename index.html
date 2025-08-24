@@ -814,6 +814,29 @@
     
     renderPaymentContent();
     document.getElementById('payment-modal').classList.remove('hidden');
+    
+    // Load saved customer data
+    loadCustomerData();
+  }
+  
+  function loadCustomerData() {
+    const savedCustomer = JSON.parse(localStorage.getItem('decastro-customer-data') || '{}');
+    
+    if (savedCustomer.name) {
+      const nameField = document.getElementById('customer-name');
+      if (nameField) nameField.value = savedCustomer.name;
+    }
+    
+    if (savedCustomer.email) {
+      const emailField = document.getElementById('customer-email');
+      if (emailField) emailField.value = savedCustomer.email;
+    }
+  }
+  
+  function saveCustomerData(name, email) {
+    const customerData = { name, email, savedAt: new Date().toISOString() };
+    localStorage.setItem('decastro-customer-data', JSON.stringify(customerData));
+    console.log('✅ Dados do cliente salvos para futuras compras');
   }
 
   function closePaymentModal() {
@@ -847,6 +870,21 @@
           <span>Total:</span>
           <span class="text-green-600">R$ ${total.toFixed(2)}</span>
         </div>
+      </div>
+      
+      <div class="mb-6">
+        <h4 class="font-semibold mb-3">👤 Dados do Comprador:</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Nome Completo *</label>
+            <input type="text" id="customer-name" class="w-full border rounded-lg px-3 py-2" placeholder="Seu nome completo" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">E-mail *</label>
+            <input type="email" id="customer-email" class="w-full border rounded-lg px-3 py-2" placeholder="seu@email.com" required>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-2">📫 Os produtos digitais serão enviados para este e-mail</p>
       </div>
       
       <div class="mb-6">
@@ -887,6 +925,32 @@
   }
 
   function processPayment() {
+    // Validate customer data
+    const customerName = document.getElementById('customer-name')?.value.trim();
+    const customerEmail = document.getElementById('customer-email')?.value.trim();
+    
+    if (!customerName || !customerEmail) {
+      alert('⚠️ Por favor, preencha seu nome e e-mail antes de continuar.');
+      return;
+    }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customerEmail)) {
+      alert('⚠️ Por favor, insira um e-mail válido.');
+      return;
+    }
+    
+    if (customerName.length < 3) {
+      alert('⚠️ Por favor, insira seu nome completo (mínimo 3 caracteres).');
+      return;
+    }
+    
+    console.log('✅ Dados do cliente validados:', customerName, customerEmail);
+    
+    // Save customer data for future purchases
+    saveCustomerData(customerName, customerEmail);
+    
     const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
     
     if (paymentMethod === 'pix') {
@@ -1223,6 +1287,10 @@
   }
 
   function confirmPayment(transactionId) {
+    // Get customer data
+    const customerName = document.getElementById('customer-name')?.value.trim();
+    const customerEmail = document.getElementById('customer-email')?.value.trim();
+    
     // In a real app, you would check payment status with Mercado Pago API
     const confirmed = confirm('✅ Confirma que o pagamento PIX foi realizado?\n\n⚠️ Só confirme se você realmente fez o pagamento.');
     
@@ -1230,6 +1298,10 @@
       const sale = {
         id: transactionId,
         date: new Date().toISOString(),
+        customer: {
+          name: customerName || 'Não informado',
+          email: customerEmail || 'Não informado'
+        },
         items: cartItems.map(item => {
           const product = products.find(p => p.id === item.productId);
           return {
@@ -1257,8 +1329,8 @@
       
       closePaymentModal();
       
-      // Show success message
-      alert('🎉 Pagamento confirmado!\n\n✅ Seus produtos digitais foram liberados.\n📧 Verifique seu email para o download.');
+      // Show success message with customer details
+      alert(`🎉 Pagamento confirmado!\n\n✅ Pedido: #${transactionId}\n👤 Cliente: ${customerName}\n📧 Email: ${customerEmail}\n\n💾 Seus produtos digitais foram liberados!\n📧 Verifique seu email para o download.`);
       
       switchTab('vendas');
     }
@@ -1333,6 +1405,12 @@
             <div>
               <h4 class="font-semibold">Pedido #${sale.id}</h4>
               <p class="text-sm text-gray-600">${date} às ${time}</p>
+              ${sale.customer ? `
+                <div class="mt-2 text-sm">
+                  <p class="text-gray-700"><strong>👤 Cliente:</strong> ${sale.customer.name}</p>
+                  <p class="text-gray-700"><strong>📧 Email:</strong> ${sale.customer.email}</p>
+                </div>
+              ` : ''}
             </div>
             <div class="text-right">
               <span class="text-lg font-bold text-green-600">R$ ${sale.total.toFixed(2)}</span>
