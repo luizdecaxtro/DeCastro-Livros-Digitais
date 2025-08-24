@@ -36,6 +36,7 @@
         <div class="flex items-center gap-2">
           <span class="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full status-badge">✅ Sistema Completo</span>
           <span class="text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded-full">PIX EMV Ativo</span>
+          <button onclick="testPixGeneration()" class="text-xs bg-orange-100 text-orange-800 px-3 py-1 rounded-full hover:bg-orange-200 cursor-pointer transition-colors">🧪 Testar PIX</button>
         </div>
       </div>
     </div>
@@ -1072,36 +1073,137 @@
       </div>
     `;
     
-    // Generate QR Code visual
-    setTimeout(() => {
+    // Generate QR Code visual with multiple fallback attempts
+    console.log('🔄 Iniciando geração do QR Code...');
+    
+    function tryGenerateQR(attempt = 1) {
+      console.log(`🔄 Tentativa ${attempt} de gerar QR Code...`);
+      
       try {
         const canvas = document.getElementById('qr-canvas');
-        if (canvas && typeof QRCode !== 'undefined') {
-          console.log('🎨 Gerando QR Code visual...');
-          QRCode.toCanvas(canvas, qrCode, {
-            width: 200,
-            margin: 2,
-            color: {
-              dark: '#000000',
-              light: '#FFFFFF'
-            }
-          }, function (error) {
-            if (error) {
-              console.error('❌ Erro ao gerar QR visual:', error);
-              canvas.style.display = 'none';
-            } else {
-              console.log('✅ QR Code visual gerado com sucesso');
-            }
-          });
-        } else {
-          console.error('❌ Canvas ou QRCode library não encontrados');
+        
+        if (!canvas) {
+          console.error('❌ Canvas não encontrado na tentativa', attempt);
+          if (attempt < 5) {
+            setTimeout(() => tryGenerateQR(attempt + 1), 200 * attempt);
+          }
+          return;
         }
+        
+        if (typeof QRCode === 'undefined' || !QRCode || !QRCode.toCanvas) {
+          console.error('❌ QRCode library issue na tentativa', attempt);
+          console.log('- typeof QRCode:', typeof QRCode);
+          console.log('- QRCode object:', QRCode);
+          console.log('- QRCode.toCanvas:', QRCode ? QRCode.toCanvas : 'N/A');
+          
+          if (attempt < 8) {
+            setTimeout(() => tryGenerateQR(attempt + 1), 400 * attempt);
+          } else {
+            console.log('❌ Max attempts reached, showing fallback');
+            // Fallback: Show QR code as text pattern
+            showQRFallback(canvas, qrCode);
+          }
+          return;
+        }
+        
+        console.log('🎨 Gerando QR Code visual - Tentativa', attempt);
+        console.log('📝 QR Code length:', qrCode.length);
+        console.log('📝 QR Code preview:', qrCode.substring(0, 50) + '...');
+        
+        QRCode.toCanvas(canvas, qrCode, {
+          width: 200,
+          height: 200,
+          margin: 2,
+          scale: 4,
+          color: {
+            dark: '#000000',
+            light: '#FFFFFF'
+          }
+        }, function (error) {
+          if (error) {
+            console.error(`❌ Erro ao gerar QR visual (tentativa ${attempt}):`, error);
+            if (attempt < 3) {
+              setTimeout(() => tryGenerateQR(attempt + 1), 500);
+            } else {
+              showQRFallback(canvas, qrCode);
+            }
+          } else {
+            console.log('✅🎨 QR Code visual gerado com sucesso!');
+          }
+        });
+        
       } catch (error) {
-        console.error('❌ Erro ao gerar QR Code:', error);
+        console.error(`❌ Erro crítico na tentativa ${attempt}:`, error);
+        if (attempt < 3) {
+          setTimeout(() => tryGenerateQR(attempt + 1), 500);
+        }
       }
-    }, 100);
+    }
+    
+    // Start generation
+    setTimeout(() => tryGenerateQR(1), 100);
   }
 
+  // QR Code fallback function
+  function showQRFallback(canvas, qrCode) {
+    console.log('🎨 Mostrando QR Code fallback...');
+    
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#f0f0f0';
+    ctx.fillRect(0, 0, 200, 200);
+    
+    // Draw a simple QR-like pattern
+    ctx.fillStyle = '#000';
+    const size = 8;
+    for (let i = 0; i < 25; i++) {
+      for (let j = 0; j < 25; j++) {
+        if ((i + j) % 2 === 0) {
+          ctx.fillRect(i * size, j * size, size, size);
+        }
+      }
+    }
+    
+    // Add text overlay
+    ctx.fillStyle = '#ff0000';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('QR CODE', 100, 100);
+    ctx.fillText('Use o código', 100, 115);
+    ctx.fillText('copia e cola', 100, 130);
+    
+    console.log('✅ QR Code fallback exibido');
+  }
+  
+  // Test PIX generation function
+  function testPixGeneration() {
+    console.log('🧪 Testando geração de PIX...');
+    
+    try {
+      const testPixKey = '98988804678';
+      const testAmount = '10.00';
+      const testQR = generateRealPixQR(testPixKey, 'TESTE DECASTRO', 'SAO LUIS', testAmount, 'Teste PIX', 'TEST' + Date.now());
+      
+      console.log('✅ PIX EMV gerado com sucesso!');
+      console.log('📝 Código:', testQR.substring(0, 50) + '...');
+      console.log('📝 Tamanho:', testQR.length, 'caracteres');
+      
+      // Test QRCode library
+      if (typeof QRCode !== 'undefined' && QRCode && QRCode.toCanvas) {
+        console.log('✅ QRCode.js OK - Biblioteca funcionando');
+      } else {
+        console.log('❌ QRCode.js com problema');
+        console.log('- typeof QRCode:', typeof QRCode);
+        console.log('- QRCode:', QRCode);
+      }
+      
+      alert('✅ Teste PIX concluído!\n\n📱 QR Code: ' + (typeof QRCode !== 'undefined' ? 'OK' : 'Com problema') + '\n📝 PIX EMV: OK\n📝 Tamanho: ' + testQR.length + ' chars\n\nVerifique o console para detalhes.');
+      
+    } catch (error) {
+      console.error('❌ Erro no teste PIX:', error);
+      alert('❌ Erro no teste PIX: ' + error.message);
+    }
+  }
+  
   function copyPixCode() {
     const textarea = document.getElementById('pix-code');
     textarea.select();
@@ -1415,13 +1517,31 @@
         console.log('✅ Sistema 100% completo - todas as 7 abas funcionando');
       }
       
-      // Test QRCode library availability
+      // Test QRCode library availability with detailed info
       setTimeout(() => {
-        const qrAvailable = typeof QRCode !== 'undefined';
-        console.log('📱 QRCode library:', qrAvailable ? '✅ OK' : '❌ Erro');
+        console.log('🔍 Verificando bibliotecas...');
+        console.log('- QRCode type:', typeof QRCode);
+        console.log('- QRCode object:', QRCode);
+        console.log('- window.QRCode:', typeof window.QRCode);
+        
+        const qrAvailable = typeof QRCode !== 'undefined' && QRCode && QRCode.toCanvas;
+        console.log('📱 QRCode library:', qrAvailable ? '✅ TOTALMENTE OK' : '❌ NÃO ENCONTRADA');
         
         if (!qrAvailable) {
-          console.warn('⚠️ QRCode.js pode não ter carregado - PIX pode não funcionar');
+          console.warn('⚠️ QRCode.js PROBLEMA - Tentando recarregar...');
+          
+          // Try to reload QRCode library
+          const script = document.createElement('script');
+          script.src = 'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js';
+          script.onload = () => {
+            console.log('✅ QRCode library recarregada!');
+          };
+          script.onerror = () => {
+            console.error('❌ Falha ao recarregar QRCode library');
+          };
+          document.head.appendChild(script);
+        } else {
+          console.log('✅ QRCode.toCanvas disponível:', typeof QRCode.toCanvas);
         }
       }, 1000);
       
@@ -1437,4 +1557,3 @@
 
 </body>
 </html>
-
