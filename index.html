@@ -38,6 +38,7 @@
           <span class="text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded-full">PIX EMV Ativo</span>
           <button onclick="testPixGeneration()" class="text-xs bg-orange-100 text-orange-800 px-3 py-1 rounded-full hover:bg-orange-200 cursor-pointer transition-colors">🧪 Testar PIX</button>
           <button onclick="testCartFunctionality()" class="text-xs bg-purple-100 text-purple-800 px-3 py-1 rounded-full hover:bg-purple-200 cursor-pointer transition-colors">🛒 Testar Carrinho</button>
+          <button onclick="forceCreateProducts()" class="text-xs bg-red-100 text-red-800 px-3 py-1 rounded-full hover:bg-red-200 cursor-pointer transition-colors">🔄 Criar Produtos</button>
         </div>
       </div>
     </div>
@@ -664,15 +665,36 @@
   // Cart management with better error handling
   function addToCart(productId) {
     console.log('🛒 Adicionando produto ao carrinho:', productId);
+    console.log('📊 Produtos disponíveis:', products.length);
+    console.log('📝 Lista de IDs:', products.map(p => p.id));
     
     const product = products.find(p => p.id === productId);
     if (!product) {
       console.error('❌ Produto não encontrado:', productId);
-      alert('❌ Produto não encontrado!');
+      console.log('📝 Produtos existentes:', products);
+      
+      // Try to reload data and retry once
+      loadData();
+      renderProducts();
+      
+      const productRetry = products.find(p => p.id === productId);
+      if (!productRetry) {
+        alert('❌ Produto não encontrado! Recarregando a página...');
+        window.location.reload();
+        return;
+      } else {
+        console.log('✅ Produto encontrado na segunda tentativa');
+      }
+    }
+    
+    // Get the correct product reference
+    const finalProduct = product || products.find(p => p.id === productId);
+    if (!finalProduct) {
+      console.error('❌ Erro: produto ainda não encontrado');
       return;
     }
     
-    console.log('✅ Produto encontrado:', product.name);
+    console.log('✅ Produto encontrado:', finalProduct.name);
     
     const existingItem = cartItems.find(item => item.productId === productId);
     if (existingItem) {
@@ -727,7 +749,7 @@
     }
     
     // Show toast notification
-    showToast(`🛒 ${product.name} adicionado ao carrinho!`, 'success');
+    showToast(`🛒 ${finalProduct.name} adicionado ao carrinho!`, 'success');
   }
   
   // Toast notification system
@@ -1876,16 +1898,70 @@
   function saveToLocalStorage() {
     localStorage.setItem('decastro-categories', JSON.stringify(categories));
   }
+  
+  // Create default products when none exist
+  function createDefaultProducts() {
+    console.log('🆕 Criando produtos padrão...');
+    
+    products = [
+      {
+        id: 'js-complete',
+        name: 'JavaScript Completo',
+        description: 'Aprenda JavaScript do zero ao avançado com projetos práticos.',
+        category: 'Programação',
+        price: 49.99,
+        image: 'keys/javascript-course?prompt=JavaScript programming course cover with modern code editor and colorful syntax highlighting',
+        downloads: 0
+      },
+      {
+        id: 'marketing-digital',
+        name: 'Marketing Digital',
+        description: 'Estratégias completas de marketing digital para alavancar seu negócio.',
+        category: 'Negócios',
+        price: 39.99,
+        image: 'keys/marketing-course?prompt=Digital marketing course cover with analytics dashboard and growth charts',
+        downloads: 0
+      },
+      {
+        id: 'design-uiux',
+        name: 'Design UI/UX',
+        description: 'Domine os princípios de design de interfaces e experiência do usuário.',
+        category: 'Design',
+        price: 59.99,
+        image: 'keys/design-course?prompt=UI UX design course cover with wireframes and modern interface mockups',
+        downloads: 0
+      },
+      {
+        id: 'bem-mal-ebook',
+        name: 'O Bem e o Mal',
+        description: 'Livro digital O Bem e o Mal',
+        category: 'Educação',
+        price: 1.00,
+        image: 'keys/bem-mal-book?prompt=Book cover with elegant typography and philosophical theme about good and evil',
+        downloads: 0
+      }
+    ];
+    
+    saveProducts();
+    console.log('✅ Produtos padrão criados:', products.length);
+  }
 
   function loadData() {
     const savedProducts = localStorage.getItem('decastro-products');
-    if (savedProducts) products = JSON.parse(savedProducts);
+    if (savedProducts) {
+      products = JSON.parse(savedProducts);
+    } else {
+      // Create default products if none exist
+      createDefaultProducts();
+    }
     
     const savedCart = localStorage.getItem('decastro-cart');
     if (savedCart) cartItems = JSON.parse(savedCart);
     
     const savedSales = localStorage.getItem('decastro-sales');
     if (savedSales) sales = JSON.parse(savedSales);
+    
+    console.log('💾 Dados carregados - Produtos:', products.length, 'Carrinho:', cartItems.length);
     
     const savedCategories = localStorage.getItem('decastro-categories');
     if (savedCategories) categories = JSON.parse(savedCategories);
@@ -2010,6 +2086,26 @@
       console.error('❌ Erro na inicialização:', error);
     }
   });
+  
+  // Force create products for debugging
+  function forceCreateProducts() {
+    console.log('🔄 Forçando criação de produtos...');
+    
+    // Clear existing products
+    products = [];
+    localStorage.removeItem('decastro-products');
+    
+    // Create new default products
+    createDefaultProducts();
+    
+    // Force render
+    renderProducts();
+    
+    alert(`✅ ${products.length} produtos criados com sucesso!\n\nTeste o botão "Adicionar ao Carrinho" agora.`);
+    
+    // Switch to store tab to show products
+    switchTab('loja');
+  }
   
   // Test cart functionality - ADICIONAL
   function testCartFunctionality() {
