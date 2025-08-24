@@ -37,6 +37,7 @@
           <span class="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full status-badge">✅ Sistema Completo</span>
           <span class="text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded-full">PIX EMV Ativo</span>
           <button onclick="testPixGeneration()" class="text-xs bg-orange-100 text-orange-800 px-3 py-1 rounded-full hover:bg-orange-200 cursor-pointer transition-colors">🧪 Testar PIX</button>
+          <button onclick="testCartFunctionality()" class="text-xs bg-purple-100 text-purple-800 px-3 py-1 rounded-full hover:bg-purple-200 cursor-pointer transition-colors">🛒 Testar Carrinho</button>
         </div>
       </div>
     </div>
@@ -622,7 +623,7 @@
               <span class="text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded">${product.category}</span>
               <span class="text-lg font-bold text-green-600">R$ ${product.price.toFixed(2)}</span>
             </div>
-            <button onclick="addToCart('${product.id}')" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 flex items-center justify-center gap-2">
+            <button onclick="addToCart('${product.id}')" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 flex items-center justify-center gap-2 transition-all">
               <i data-lucide="shopping-cart" class="w-4 h-4"></i>
               Adicionar ao Carrinho
             </button>
@@ -660,36 +661,116 @@
     lucide.createIcons();
   }
 
-  // Cart management
+  // Cart management with better error handling
   function addToCart(productId) {
+    console.log('🛒 Adicionando produto ao carrinho:', productId);
+    
     const product = products.find(p => p.id === productId);
-    if (!product) return;
+    if (!product) {
+      console.error('❌ Produto não encontrado:', productId);
+      alert('❌ Produto não encontrado!');
+      return;
+    }
+    
+    console.log('✅ Produto encontrado:', product.name);
     
     const existingItem = cartItems.find(item => item.productId === productId);
     if (existingItem) {
       existingItem.quantity += 1;
+      console.log('📦 Quantidade atualizada:', existingItem.quantity);
     } else {
       cartItems.push({
         productId: productId,
         quantity: 1
       });
+      console.log('🆕 Novo item adicionado ao carrinho');
     }
     
     saveCart();
     updateCounters();
     
-    // Show success feedback
-    const button = event.target;
-    const originalText = button.innerHTML;
-    button.innerHTML = '✅ Adicionado!';
-    button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-    button.classList.add('bg-green-600');
+    console.log('🛒 Carrinho atual:', cartItems.length, 'itens');
     
+    // Show success feedback with better button handling
+    try {
+      let button = null;
+      
+      // Try to find the button that was clicked
+      if (window.event && window.event.target) {
+        button = window.event.target;
+        if (button.tagName !== 'BUTTON') {
+          button = button.closest('button');
+        }
+      }
+      
+      // Fallback: find button by product ID
+      if (!button) {
+        button = document.querySelector(`button[onclick*="addToCart('${productId}')"]`);
+      }
+      
+      if (button) {
+        const originalText = button.innerHTML;
+        button.innerHTML = '✅ Adicionado!';
+        button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+        button.classList.add('bg-green-600');
+        button.disabled = true;
+        
+        setTimeout(() => {
+          button.innerHTML = originalText;
+          button.classList.remove('bg-green-600');
+          button.classList.add('bg-blue-600', 'hover:bg-blue-700');
+          button.disabled = false;
+        }, 1500);
+      }
+    } catch (error) {
+      console.warn('⚠️ Erro no feedback visual:', error);
+    }
+    
+    // Show toast notification
+    showToast(`🛒 ${product.name} adicionado ao carrinho!`, 'success');
+  }
+  
+  // Toast notification system
+  function showToast(message, type = 'info') {
+    const toastId = 'toast-' + Date.now();
+    const colors = {
+      success: 'bg-green-600',
+      error: 'bg-red-600',
+      warning: 'bg-yellow-600',
+      info: 'bg-blue-600'
+    };
+    
+    const toast = document.createElement('div');
+    toast.id = toastId;
+    toast.className = `fixed top-4 right-4 ${colors[type] || colors.info} text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300`;
+    toast.innerHTML = `
+      <div class="flex items-center gap-2">
+        <span>${message}</span>
+        <button onclick="closeToast('${toastId}')" class="ml-2 text-white hover:text-gray-200">×</button>
+      </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Animate in
     setTimeout(() => {
-      button.innerHTML = originalText;
-      button.classList.remove('bg-green-600');
-      button.classList.add('bg-blue-600', 'hover:bg-blue-700');
-    }, 1500);
+      toast.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Auto remove
+    setTimeout(() => {
+      closeToast(toastId);
+    }, 3000);
+  }
+  
+  function closeToast(toastId) {
+    const toast = document.getElementById(toastId);
+    if (toast) {
+      toast.classList.add('translate-x-full');
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    }
   }
 
   function removeFromCart(productId) {
@@ -1402,7 +1483,7 @@
           };
           document.head.appendChild(script);
         } else {
-          console.log('❌ Usando fallback visual');
+          console.log('❌ Todas as tentativas falharam, usando fallback visual');
           showQRFallback(canvas, qrCode);
         }
       }
@@ -1436,9 +1517,26 @@
       }
     }
     
-    // Start generation immediately and also after delay
+    // Start generation with improved timing and verification
     tryGenerateQR(1);
-    setTimeout(() => tryGenerateQR(1), 500);
+    
+    // Verify and retry if needed
+    setTimeout(() => {
+      const canvas = document.getElementById('qr-canvas');
+      if (canvas && !canvas.querySelector('canvas') && !canvas.textContent.includes('█')) {
+        console.log('🔄 QR não gerado ainda, tentando novamente...');
+        tryGenerateQR(1);
+      }
+    }, 1500);
+    
+    // Final attempt
+    setTimeout(() => {
+      const canvas = document.getElementById('qr-canvas');
+      if (canvas && !canvas.querySelector('canvas') && !canvas.textContent.includes('█')) {
+        console.log('🔄 Última tentativa de QR Code...');
+        tryGenerateQR(1);
+      }
+    }, 3000);
   }
 
   // QR Code fallback function
@@ -1469,6 +1567,16 @@
     ctx.fillText('copia e cola', 100, 130);
     
     console.log('✅ QR Code fallback exibido');
+    
+    // Add copy functionality to fallback
+    canvas.innerHTML += `
+      <div class="mt-4 text-center">
+        <div class="bg-gray-100 p-3 rounded text-xs font-mono break-all mb-2">${qrCode}</div>
+        <button onclick="copyPixCode('${qrCode}')" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
+          📋 Copiar Código PIX
+        </button>
+      </div>
+    `;
   }
   
   // Test PIX generation function
@@ -1902,6 +2010,81 @@
       console.error('❌ Erro na inicialização:', error);
     }
   });
+  
+  // Test cart functionality - ADICIONAL
+  function testCartFunctionality() {
+    console.log('🛒 TESTANDO FUNCIONALIDADE DO CARRINHO...');
+    
+    if (products.length === 0) {
+      alert('❌ Adicione produtos primeiro na aba Admin para testar o carrinho!');
+      switchTab('admin');
+      return;
+    }
+    
+    const testProduct = products[0];
+    console.log('📦 Testando com produto:', testProduct.name);
+    
+    const initialCount = cartItems.length;
+    console.log('📊 Itens antes:', initialCount);
+    
+    try {
+      addToCart(testProduct.id);
+      console.log('✅ addToCart executado');
+      
+      setTimeout(() => {
+        const newCount = cartItems.length;
+        console.log('📊 Itens depois:', newCount);
+        
+        if (newCount > initialCount) {
+          switchTab('carrinho');
+          setTimeout(() => {
+            const cartContainer = document.getElementById('cart-items');
+            const isEmpty = cartContainer?.innerHTML.includes('Carrinho vazio');
+            
+            if (!isEmpty) {
+              const results = `✅ CARRINHO FUNCIONANDO!\n\n📦 ${testProduct.name}\n💰 R$ ${testProduct.price.toFixed(2)}\n📊 ${newCount} item(s)\n\nTeste o pagamento agora!`;
+              alert(results);
+            } else {
+              alert('⚠️ Produto adicionado mas não aparece no carrinho');
+            }
+          }, 500);
+        } else {
+          alert('❌ Falha ao adicionar produto ao carrinho!');
+        }
+      }, 200);
+      
+    } catch (error) {
+      console.error('❌ Erro:', error);
+      alert('❌ Erro: ' + error.message);
+    }
+  }
+  
+  // Copy PIX function - ADICIONAL
+  function copyPixCode(pixCode) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(pixCode).then(() => {
+        if (typeof showToast === 'function') {
+          showToast('✅ Código PIX copiado!', 'success');
+        } else {
+          alert('✅ PIX copiado!');
+        }
+      }).catch(() => {
+        copyFallback(pixCode);
+      });
+    } else {
+      copyFallback(pixCode);
+    }
+  }
+  
+  function copyFallback(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    alert('✅ PIX copiado!');
+  }
 </script>
 
 </body>
